@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-//todo change this to return a struct.
 Labyrinth parse();
+
 #endif //PARSE_H
