@@ -9,13 +9,11 @@
 typedef size_t dimension_t;
 typedef size_t coordinate_t;
 
-/*
-//dimensionality as in "three-dimensional plane", "one hundred-dimensional cube".
-typedef struct Dimensions {
-	dimension_t *sizes;
-	dimension_t dimensionality;
-} Dimensions;
-*/
+typedef struct NumbersArray {
+	size_t *array;
+	size_t array_size;
+	size_t allocated_size;
+} NumbersArray;
 
 typedef struct Block {
 	coordinate_t *coordinates;
@@ -30,5 +28,7 @@ typedef struct Labyrinth {
 } Labyrinth;
 
 void init_labyrinth (Labyrinth *labyrinth);
+void init_block (Block *block);
+void init_numbers_array (NumbersArray *num_array);
 
 #endif //_TYPES_H

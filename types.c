@@ -3,8 +3,14 @@
 #include "types.h"
 #include "memory_managment.h"
 
+void init_numbers_array (NumbersArray *num_array) {
+	num_array->array = malloc_wrapper(START_ARRAY_SIZE*sizeof(size_t));
+	check_alloc(num_array->array);
+	num_array->array_size = 0;
+	num_array->allocated_size = START_ARRAY_SIZE;
+}
+
 void init_block (Block *block) {
-	block->coordinates = NULL;
 	block->coordinates_size = 0;
 }
 
