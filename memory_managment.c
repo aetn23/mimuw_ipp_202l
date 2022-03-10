@@ -27,3 +27,13 @@ void *realloc_wrapper(void *ptr, size_t size) {
 
 	return ptr;
 }
+
+//todo add freeing of walls
+void free_labyrinth(Labyrinth *labyrinth) {
+	if (labyrinth->dimensions != NULL)
+		free(labyrinth->dimensions);
+	if (labyrinth->start.coordinates != NULL)
+		free(labyrinth->start.coordinates);
+	if (labyrinth->finish.coordinates != NULL)
+		free(labyrinth->finish.coordinates);
+}

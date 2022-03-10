@@ -36,5 +36,10 @@ void clear_str(String *str) {
 	str->size = 0;
 }
 
+size_t str_to_size_t(String *str) {
+	char *str_end;
+
+	return strtoull(str->content, &str_end, 10);
+}
 
 

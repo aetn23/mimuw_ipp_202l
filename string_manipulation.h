@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <ctype.h>
+#include <stdlib.h>
 
 typedef struct String {
 	char *content;
@@ -26,6 +27,8 @@ void insert(char *string, char to_insert, size_t location);
 void str_insert(String *str, char to_insert, size_t location);
 
 void clear_str(String *str);
+
+size_t str_to_size_t(String *str);
 
 
 

@@ -20,4 +20,6 @@ void free_string(String *str);
 
 void *realloc_wrapper(void *ptr, size_t size);
 
+void free_labyrinth(Labyrinth *labyrinth);
+
 #endif //_MEMORY_MANAGMENT_

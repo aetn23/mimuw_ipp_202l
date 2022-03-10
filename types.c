@@ -11,7 +11,7 @@ void init_numbers_array (NumbersArray *num_array) {
 }
 
 void init_block (Block *block) {
-	block->coordinates_size = 0;
+	block->coordinates = NULL;
 }
 
 void init_labyrinth (Labyrinth *labyrinth) {

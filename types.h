@@ -17,7 +17,6 @@ typedef struct NumbersArray {
 
 typedef struct Block {
 	coordinate_t *coordinates;
-	size_t coordinates_size;
 } Block;
 
 typedef struct Labyrinth {
