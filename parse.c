@@ -5,10 +5,10 @@
 #include <stdbool.h>
 #include <sys/types.h>
 #include <errno.h>
+#include <ctype.h>
 
 #include "parse.h"
 #include "memory_managment.h"
-#include "string_manipulation.h"
 #include "error_handling.h"
 
 

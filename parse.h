@@ -1,7 +1,7 @@
 #ifndef PARSE_H
 #define PARSE_H
 
-#include "types.h"
+#include "containers.h"
 
 Labyrinth parse();
 

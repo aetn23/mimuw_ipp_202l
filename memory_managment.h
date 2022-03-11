@@ -3,8 +3,7 @@
 
 #include <stdlib.h>
 
-#include "types.h"
-#include "string_manipulation.h"
+#include "containers.h"
 
 #define REALLOC_MULTIPLIER 2
 #define START_ARRAY_SIZE 2
