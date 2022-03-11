@@ -1,10 +1,8 @@
-#include <stdlib.h>
-
 #include "types.h"
 #include "memory_managment.h"
 
 void init_numbers_array (NumbersArray *num_array) {
-	num_array->array = malloc_wrapper(START_ARRAY_SIZE*sizeof(size_t));
+	num_array->array = NULL;
 	check_alloc(num_array->array);
 	num_array->array_size = 0;
 	num_array->allocated_size = START_ARRAY_SIZE;
