@@ -13,19 +13,23 @@ void *malloc_wrapper(size_t size) {
 	return result;
 }
 
-void free_numbers_array(NumbersArray *array) {
-	free(array->array);
-}
 
-void free_string(String *str) {
-	free(str->content);
-}
 
 void *realloc_wrapper(void *ptr, size_t size) {
 	ptr = realloc(ptr, size);
 	check_alloc(ptr);
 
 	return ptr;
+}
+
+void free_numbers_array(NumbersArray *array) {
+	if (array->array != NULL)
+		free(array->array);
+}
+
+void free_string(String *str) {
+	if (str->content != NULL)
+		free(str->content);
 }
 
 //todo add freeing of walls

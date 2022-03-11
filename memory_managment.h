@@ -7,7 +7,7 @@
 #include "string_manipulation.h"
 
 #define REALLOC_MULTIPLIER 2
-#define START_ARRAY_SIZE 8
+#define START_ARRAY_SIZE 2
 
 
 void check_alloc(void *pointer);

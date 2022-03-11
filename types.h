@@ -29,5 +29,6 @@ typedef struct Labyrinth {
 void init_labyrinth (Labyrinth *labyrinth);
 void init_block (Block *block);
 void init_numbers_array (NumbersArray *num_array);
+void push_back_number(NumbersArray *num_array, size_t number);
 
 #endif //_TYPES_H

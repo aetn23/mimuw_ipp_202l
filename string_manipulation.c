@@ -21,8 +21,8 @@ void insert(char *str, char to_insert, size_t location) {
 }
 //There is no guarantee that string wil be null terminated after this operation
 void str_insert(String *str, char to_insert, size_t location) {
-	if (str->size >= location) {
-		str->content = realloc_wrapper(str->content, REALLOC_MULTIPLIER * str->allocated_size);
+	while (location > str->allocated_size) {
+		str->content = realloc_wrapper(str->content, sizeof(char) * REALLOC_MULTIPLIER * str->allocated_size);
 		str->allocated_size = REALLOC_MULTIPLIER * str->allocated_size;
 	}
 

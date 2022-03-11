@@ -12,7 +12,6 @@
 #include "error_handling.h"
 
 
-
 Line read_line() {
 	Line line;
 	init_line(&line);
@@ -70,8 +69,7 @@ bool parse_first_3_lines_helper(NumbersArray *numbers, Line *line,
 					return false;
 				}
 				//todo write functions to do this
-				numbers->array[numbers->array_size] = number;
-				numbers->array_size++;
+				push_back_number(numbers, number);
 
 				clear_str(&number_as_string);
 
@@ -97,6 +95,7 @@ bool parse_first_3_lines(Labyrinth *labyrinth, Line *line, size_t line_number) {
 	NumbersArray numbers;
 	init_numbers_array(&numbers);
 	numbers.array = malloc_wrapper(sizeof(size_t) * START_ARRAY_SIZE);
+	numbers.allocated_size = START_ARRAY_SIZE;
 
 	if (!parse_first_3_lines_helper(&numbers, line, line_number)) {
 		free_numbers_array(&numbers);
@@ -130,8 +129,8 @@ bool parse_first_3_lines(Labyrinth *labyrinth, Line *line, size_t line_number) {
 }
 
 bool parse_fourth_line_helper(String *result_hexal_variant,
-															NumbersArray *result_R_variant, Line *line,
-															size_t line_number) {
+                              NumbersArray *result_R_variant, Line *line,
+                              size_t line_number) {
 	size_t i = 0;
 	char character;
 
@@ -152,9 +151,8 @@ bool parse_fourth_line_helper(String *result_hexal_variant,
 		result_R_variant->array = malloc_wrapper(sizeof(size_t) * START_ARRAY_SIZE);
 
 		if (parse_first_3_lines_helper(result_R_variant, line, line_number)) {
-			if (result_R_variant.array[2] == 0) {
+			if (result_R_variant->array[2] == 0 || result_R_variant->array_size != 5) {
 				handle_wrong_input(line_number);
-				free_numbers_array(result_R_variant);
 
 				return false;
 			} else {
@@ -162,7 +160,7 @@ bool parse_fourth_line_helper(String *result_hexal_variant,
 			}
 		}
 	} else if (character == '0') {
-
+		return false;
 	} else {
 		handle_wrong_input(line_number);
 		return false;
@@ -178,8 +176,16 @@ bool parse_fourth_line(Labyrinth *labyrinth, Line *line, size_t line_number) {
 	init_numbers_array(&result_R_variant);
 
 	//todo test if all works at this point
-	parse_fourth_line_helper(&result_hexal_variant, &result_R_variant, line,
-													 line_number);
+	if (parse_fourth_line_helper(&result_hexal_variant, &result_R_variant, line,
+	                             line_number)) {
+		free_string(&result_hexal_variant);
+		free_numbers_array(&result_R_variant);
+
+		return false;
+	}
+
+	free_string(&result_hexal_variant);
+	free_numbers_array(&result_R_variant);
 
 	return true;
 }
@@ -208,17 +214,27 @@ Labyrinth parse() {
 		//to be more readable.
 		insert(line.content, '\t', line.size - 1);
 
-		lines_count++;
-		if (lines_count <= 3)
-			if (!parse_first_3_lines(&labyrinth, &line, lines_count))
+		if (lines_count <= 3) {
+			if (!parse_first_3_lines(&labyrinth, &line, lines_count)) {
+				//printf("erro\n");
 				break;
+			}
+		} else {
+			if (!parse_fourth_line(&labyrinth, &line, lines_count)) {
+				//printf("erro\n");
+				break;
+			}
+		}
+		//break;
+		lines_count++;
+
 		//todo the other case
 
 		free(line.content);
 	}
 	//printf("%zu\n", (size_t)-1);
-	free_labyrinth(&labyrinth);
 	free(line.content);
+	free_labyrinth(&labyrinth);
 
 	return labyrinth;
 }
