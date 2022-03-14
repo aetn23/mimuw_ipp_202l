@@ -36,8 +36,8 @@ void free_string(String *str) {
 void free_labyrinth(Labyrinth *labyrinth) {
 	if (labyrinth->dimensions != NULL)
 		free(labyrinth->dimensions);
-	if (labyrinth->start.coordinates != NULL)
-		free(labyrinth->start.coordinates);
-	if (labyrinth->finish.coordinates != NULL)
-		free(labyrinth->finish.coordinates);
+	if (labyrinth->is_hexal_version && labyrinth->walls_hexal_version.content != NULL)
+		free(labyrinth->walls_hexal_version.content);
+	else if (!labyrinth->is_hexal_version && labyrinth->walls_R_version.array != NULL)
+		free(labyrinth->walls_R_version.array);
 }

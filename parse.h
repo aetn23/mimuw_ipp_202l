@@ -3,6 +3,6 @@
 
 #include "containers.h"
 
-Labyrinth parse();
+bool parse(Labyrinth *labyrinth);
 
 #endif //PARSE_H

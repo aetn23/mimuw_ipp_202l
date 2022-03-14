@@ -1,7 +1,10 @@
 #include "containers.h"
 #include "parse.h"
+#include "memory_managment.h"
 
 int main() {
-	parse();
+	Labyrinth labyrinth;
+	parse(&labyrinth);
+	free_labyrinth(&labyrinth);
 	return 0;
 }

@@ -28,7 +28,6 @@ Line read_line() {
 	return line;
 }
 
-
 bool parse_first_3_lines_helper(NumbersArray *numbers, Line *line,
                                 size_t line_number) {
 	bool is_previous_blank = true;
@@ -68,7 +67,6 @@ bool parse_first_3_lines_helper(NumbersArray *numbers, Line *line,
 
 					return false;
 				}
-				//todo write functions to do this
 				push_back_number(numbers, number);
 
 				clear_str(&number_as_string);
@@ -106,20 +104,26 @@ bool parse_first_3_lines(Labyrinth *labyrinth, Line *line, size_t line_number) {
 		labyrinth->dimensions = numbers.array;
 		labyrinth->dimensions_size = numbers.array_size;
 
-		labyrinth->dimensions = realloc_wrapper(labyrinth->dimensions, sizeof(size_t) * labyrinth->dimensions_size);
+		//labyrinth->dimensions = realloc_wrapper(labyrinth->dimensions, sizeof(size_t) * labyrinth->dimensions_size);
+
+		labyrinth->dimensionality = 1;
+		for(size_t i = 0; i < numbers.array_size; i++)
+			labyrinth->dimensionality *= numbers.array[i];
 	} else if (numbers.array_size != labyrinth->dimensions_size) {
 		free_numbers_array(&numbers);
 		handle_wrong_input(line_number);
 
 		return false;
-	} else if (labyrinth->start.coordinates == NULL) {
-		labyrinth->start.coordinates = numbers.array;
-		labyrinth->start.coordinates = realloc_wrapper(labyrinth->start.coordinates,
-		                                               sizeof(size_t) * labyrinth->dimensions_size);
-	} else if (labyrinth->finish.coordinates == NULL) {
-		labyrinth->finish.coordinates = numbers.array;
-		labyrinth->finish.coordinates = realloc_wrapper(labyrinth->finish.coordinates,
-		                                                sizeof(size_t) * labyrinth->dimensions_size);
+	} else if (labyrinth->start == 0) {
+		//labyrinth->start.coordinates = numbers.array;
+		//labyrinth->start.coordinates = realloc_wrapper(labyrinth->start.coordinates,
+		 //                                              sizeof(size_t) * labyrinth->dimensions_size);
+		 free(numbers.array);
+	} else if (labyrinth->finish == 0) {
+		//labyrinth->finish.coordinates = numbers.array;
+		//labyrinth->finish.coordinates = realloc_wrapper(labyrinth->finish.coordinates,
+		 //                                               sizeof(size_t) * labyrinth->dimensions_size);
+		 free(numbers.array);
 	}
 
 	//for(size_t i = 0; i < numbers.array_size; i ++) printf("%zu\n", numbers.array[i]);
@@ -160,13 +164,30 @@ bool parse_fourth_line_helper(String *result_hexal_variant,
 			}
 		}
 	} else if (character == '0') {
-		return false;
+		if (!(line->size - 1 > i && tolower(line->content[++i]) == 'x')) {
+			handle_wrong_input(line_number);
+			return false;
+		}
+
+		++i;
+		character = line->content[i];
+		//Skip the last character, which is blank
+		for (; i < line->size - 1; i++) {
+			if(isxdigit(character)) {
+				str_insert(result_hexal_variant, character, result_hexal_variant->size);
+				continue;
+			}
+
+			handle_wrong_input(line_number);
+			return false;
+		}
+
 	} else {
 		handle_wrong_input(line_number);
 		return false;
 	}
 
-
+	return true;
 }
 
 bool parse_fourth_line(Labyrinth *labyrinth, Line *line, size_t line_number) {
@@ -175,8 +196,7 @@ bool parse_fourth_line(Labyrinth *labyrinth, Line *line, size_t line_number) {
 	NumbersArray result_R_variant;
 	init_numbers_array(&result_R_variant);
 
-	//todo test if all works at this point
-	if (parse_fourth_line_helper(&result_hexal_variant, &result_R_variant, line,
+	if (!parse_fourth_line_helper(&result_hexal_variant, &result_R_variant, line,
 	                             line_number)) {
 		free_string(&result_hexal_variant);
 		free_numbers_array(&result_R_variant);
@@ -184,29 +204,40 @@ bool parse_fourth_line(Labyrinth *labyrinth, Line *line, size_t line_number) {
 		return false;
 	}
 
+	if (result_hexal_variant.content == NULL) {
+		labyrinth->is_hexal_version = false;
+		labyrinth->walls_R_version.array = result_R_variant.array;
+		labyrinth->walls_R_version.array = realloc_wrapper(
+						labyrinth->walls_R_version.array, result_R_variant.array_size);
+		labyrinth->walls_R_version.array_size = result_R_variant.array_size;
+		labyrinth->walls_R_version.allocated_size = result_R_variant.array_size;
+	} else {
+		labyrinth->is_hexal_version = true;
+		labyrinth->walls_hexal_version = hexal_to_binary(&result_hexal_variant);
+
+		free_numbers_array(&result_R_variant);
+	}
+
 	free_string(&result_hexal_variant);
-	free_numbers_array(&result_R_variant);
 
 	return true;
 }
 
-Labyrinth parse() {
-	Labyrinth labyrinth;
-	init_labyrinth(&labyrinth);
+bool parse(Labyrinth *labyrinth) {
+	init_labyrinth(labyrinth);
 	Line line;
 	init_line(&line);
 	size_t lines_count = 1;
-
+	bool success = true;
+	
 	while (true) {
 		line = read_line();
-		//printf("state: %zu\n", line.state);
-		//printf("cout : %zu\n", lines_count);
 
 		if (!line.state && lines_count == MAX_NUM_LINES + 1) {
 			break;
 		} else if ((lines_count > MAX_NUM_LINES) || (!line.state && lines_count <= MAX_NUM_LINES)) {
 			handle_wrong_input(lines_count);
-			break;
+			success = false;
 		}
 
 		//parse_first_3_lines function works on assumption that line ends with char
@@ -215,26 +246,23 @@ Labyrinth parse() {
 		insert(line.content, '\t', line.size - 1);
 
 		if (lines_count <= 3) {
-			if (!parse_first_3_lines(&labyrinth, &line, lines_count)) {
-				//printf("erro\n");
+			if (!parse_first_3_lines(labyrinth, &line, lines_count)) {
+				success = false;
 				break;
 			}
 		} else {
-			if (!parse_fourth_line(&labyrinth, &line, lines_count)) {
-				//printf("erro\n");
+			if (!parse_fourth_line(labyrinth, &line, lines_count)) {
+				success = false;
 				break;
 			}
 		}
-		//break;
-		lines_count++;
 
-		//todo the other case
+		lines_count++;
 
 		free(line.content);
 	}
-	//printf("%zu\n", (size_t)-1);
-	free(line.content);
-	free_labyrinth(&labyrinth);
 
-	return labyrinth;
+	free(line.content);
+
+	return success;
 }
