@@ -18,13 +18,14 @@ typedef struct BoolArray {
 
 typedef struct NumbersArray {
 	size_t *array;
-	size_t array_size;
+	size_t size;
 	size_t allocated_size;
 } NumbersArray;
 
 typedef struct Block {
 	coordinate_t *coordinates;
 } Block;
+
 /*
 typedef struct Labyrinth {
 	dimension_t *dimensions;
@@ -34,17 +35,15 @@ typedef struct Labyrinth {
 } Labyrinth;
 */
 
-
 typedef struct String {
 	char *content;
 	size_t size;
 	size_t allocated_size;
 } String;
 
-
 typedef struct Labyrinth {
 	dimension_t *dimensions;
-	size_t dimensions_size, dimensionality;
+	size_t dimensions_size, block_count;
 	size_t start, finish;
 	union {
 		NumbersArray walls_R_version;
@@ -59,6 +58,21 @@ typedef struct Line {
 	size_t size;
 	bool state;
 } Line;
+
+//FIFO can be implemented using linked list, which is memory effective, but
+//has insertion time complexity of O(n) which is huge drawback, since in this
+//task insertion to queue will be used much. Also linked list do not have
+//caching benefits of array's.
+//To mitigate memory effectiveness of array FIFO I will reallocate it every x
+//elements.
+typedef struct NumFIFO {
+	size_t *array;
+	size_t first_pos, allocated_size, size;
+} NumFIFO;
+
+void init_fifo(NumFIFO *fifo);
+void enqueue(NumFIFO *fifo, size_t value);
+size_t dequeue(NumFIFO *fifo, bool *end);
 
 void init_labyrinth (Labyrinth *labyrinth);
 void init_block (Block *block);
@@ -80,5 +94,9 @@ void clear_str(String *str);
 String hexal_to_binary(String *str);
 
 size_t str_to_size_t(String *str);
+
+size_t count_array_product(NumbersArray *array, bool *overflow);
+
+
 
 #endif //_TYPES_H

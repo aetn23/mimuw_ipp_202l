@@ -13,8 +13,6 @@ void *malloc_wrapper(size_t size) {
 	return result;
 }
 
-
-
 void *realloc_wrapper(void *ptr, size_t size) {
 	ptr = realloc(ptr, size);
 	check_alloc(ptr);
@@ -32,7 +30,6 @@ void free_string(String *str) {
 		free(str->content);
 }
 
-//todo add freeing of walls
 void free_labyrinth(Labyrinth *labyrinth) {
 	if (labyrinth->dimensions != NULL)
 		free(labyrinth->dimensions);
@@ -40,4 +37,9 @@ void free_labyrinth(Labyrinth *labyrinth) {
 		free(labyrinth->walls_hexal_version.content);
 	else if (!labyrinth->is_hexal_version && labyrinth->walls_R_version.array != NULL)
 		free(labyrinth->walls_R_version.array);
+}
+
+void free_queue(NumFIFO *fifo) {
+	if (fifo->array != NULL)
+		free(fifo->array);
 }
