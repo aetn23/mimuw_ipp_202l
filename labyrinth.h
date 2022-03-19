@@ -7,13 +7,9 @@
 #include "arrays.h"
 #include "my_string.h"
 
-
-typedef size_t dimension_t;
-typedef size_t coordinate_t;
-
 typedef struct Labyrinth {
-	dimension_t *dimensions;
-	size_t dimensions_size, block_count;
+	NumbersArray dimensions;
+	size_t block_count;
 	size_t start, finish;
 	union {
 		NumbersArray walls_R_version;
@@ -24,5 +20,12 @@ typedef struct Labyrinth {
 } Labyrinth;
 
 void init_labyrinth (Labyrinth *labyrinth);
+
+size_t array_rep_to_number_rep (const NumbersArray *array, const Labyrinth *labyrinth);
+
+void number_rep_to_array_rep (size_t number, const Labyrinth *labyrinth,
+                              NumbersArray *result);
+
+void get_neighbours(size_t block, const Labyrinth *labyrinth, NumbersArray *result);
 
 #endif //_TYPES_H

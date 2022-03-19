@@ -97,7 +97,8 @@ bool parse_first_3_lines(Labyrinth *labyrinth, Line *line, size_t line_number) {
 
 	if (line_number == 1) {
 		bool overflow = false;
-		labyrinth->block_count = array_product(&numbers, &overflow);
+		labyrinth->block_count = array_product(&numbers,
+		                                       &overflow, 0, numbers.size);
 		if (overflow) {
 			free_numbers_array(&numbers);
 			handle_wrong_input(line_number);
@@ -105,27 +106,38 @@ bool parse_first_3_lines(Labyrinth *labyrinth, Line *line, size_t line_number) {
 			return false;
 		}
 
-		labyrinth->dimensions = numbers.array;
-		labyrinth->dimensions_size = numbers.size;
+		labyrinth->dimensions = numbers;
 
 		//labyrinth->dimensions = realloc_wrapper(labyrinth->dimensions,
 		//																				sizeof(size_t) * labyrinth->dimensions_size);
-	} else if (numbers.size != labyrinth->dimensions_size) {
+	} else if (numbers.size != labyrinth->dimensions.size) {
 		free_numbers_array(&numbers);
 		handle_wrong_input(line_number);
 
 		return false;
 	} else if (line_number == 2) {
+		size_t arra_rep_to_num = array_rep_to_number_rep(&numbers, labyrinth);
+		printf("%zu\n", arra_rep_to_num);
+		NumbersArray test;
+		init_numbers_array(&test);
+		test.array = malloc_wrapper(labyrinth->dimensions.size * 2 * sizeof(size_t));
+		test.allocated_size = 2 * labyrinth->dimensions.size;
+		test.size = 0;
+		//number_rep_to_array_rep(arra_rep_to_num, labyrinth, &test);
+		get_neighbours(arra_rep_to_num, labyrinth, &test);
+		//printf("%zu\n", test.size);
+		printf_array(&test);
+		free_numbers_array(&test);
 		//labyrinth->start.coordinates = numbers.array;
 		//labyrinth->start.coordinates = realloc_wrapper(labyrinth->start.coordinates,
-		 //                                              sizeof(size_t) * labyrinth->dimensions_size);
-		 //free(numbers.array);
+		//                                              sizeof(size_t) * labyrinth->dimensions_size);
+		//free(numbers.array);
 		free_numbers_array(&numbers);
 	} else if (line_number == 3) {
 		//labyrinth->finish.coordinates = numbers.array;
 		//labyrinth->finish.coordinates = realloc_wrapper(labyrinth->finish.coordinates,
-		 //                                               sizeof(size_t) * labyrinth->dimensions_size);
-		 //free(numbers.array);
+		//                                               sizeof(size_t) * labyrinth->dimensions_size);
+		//free(numbers.array);
 		free_numbers_array(&numbers);
 	}
 
@@ -176,7 +188,7 @@ bool parse_fourth_line_helper(String *result_hexal_variant,
 		character = line->content[i];
 		//Skip the last character, which is blank
 		for (; i < line->size - 1; i++) {
-			if(isxdigit(character)) {
+			if (isxdigit(character)) {
 				insert_str(result_hexal_variant, character, result_hexal_variant->size);
 				continue;
 			}
@@ -200,7 +212,7 @@ bool parse_fourth_line(Labyrinth *labyrinth, Line *line, size_t line_number) {
 	init_numbers_array(&result_R_variant);
 
 	if (!parse_fourth_line_helper(&result_hexal_variant, &result_R_variant, line,
-	                             line_number)) {
+	                              line_number)) {
 		free_string(&result_hexal_variant);
 		free_numbers_array(&result_R_variant);
 
@@ -232,7 +244,7 @@ bool parse(Labyrinth *labyrinth) {
 	init_line(&line);
 	size_t lines_count = 1;
 	bool success = true;
-	
+
 	while (true) {
 		line = read_line();
 

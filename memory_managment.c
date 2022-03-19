@@ -1,6 +1,7 @@
 #include "memory_managment.h"
 #include "error_handling.h"
 
+
 void check_alloc(void *pointer) {
 	if (pointer == NULL)
 		handle_alloc_failure();
@@ -31,8 +32,7 @@ void free_string(String *str) {
 }
 
 void free_labyrinth(Labyrinth *labyrinth) {
-	if (labyrinth->dimensions != NULL)
-		free(labyrinth->dimensions);
+	free_numbers_array(&labyrinth->dimensions);
 	if (labyrinth->is_hexal_version && labyrinth->walls_hexal_version.content != NULL)
 		free(labyrinth->walls_hexal_version.content);
 	else if (!labyrinth->is_hexal_version && labyrinth->walls_R_version.array != NULL)

@@ -7,9 +7,8 @@
 #include "bst.h"
 #include "queue.h"
 
-#define REALLOC_MULTIPLIER 2
 #define START_ARRAY_SIZE 2
-
+#define REALLOC_MULTIPLIER 2
 
 void check_alloc(void *pointer);
 
@@ -24,7 +23,6 @@ void *realloc_wrapper(void *ptr, size_t size);
 void free_labyrinth(Labyrinth *labyrinth);
 
 void free_queue(NumFIFO *fifo);
-
 
 //todo rewrite this iteratively
 void free_tree(BST *node);
