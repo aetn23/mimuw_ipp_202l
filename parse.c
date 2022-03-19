@@ -9,6 +9,8 @@
 #include <ctype.h>
 
 #include "parse.h"
+#include "my_string.h"
+#include "arrays.h"
 #include "memory_managment.h"
 #include "error_handling.h"
 

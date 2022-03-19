@@ -3,7 +3,9 @@
 
 #include <stdlib.h>
 
-#include "containers.h"
+#include "labyrinth.h"
+#include "bst.h"
+#include "queue.h"
 
 #define REALLOC_MULTIPLIER 2
 #define START_ARRAY_SIZE 2

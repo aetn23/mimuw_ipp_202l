@@ -1,16 +1,14 @@
 #include <stdio.h>
 
-#include "containers.h"
+#include "labyrinth.h"
 #include "parse.h"
 #include "memory_managment.h"
 
 int main() {
-	/*
 	Labyrinth labyrinth;
 	parse(&labyrinth);
 	free_labyrinth(&labyrinth);
 
-*/
 
 
 	BST *tree = NULL;

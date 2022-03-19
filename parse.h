@@ -1,7 +1,7 @@
 #ifndef PARSE_H
 #define PARSE_H
 
-#include "containers.h"
+#include "labyrinth.h"
 
 bool parse(Labyrinth *labyrinth);
 
