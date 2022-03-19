@@ -12,9 +12,6 @@ void init_numbers_array(NumbersArray *num_array) {
 	num_array->allocated_size = 0;
 }
 
-void init_block(Block *block) {
-	block->coordinates = NULL;
-}
 
 void init_labyrinth(Labyrinth *labyrinth) {
 	labyrinth->dimensions = NULL;
@@ -25,7 +22,7 @@ void init_labyrinth(Labyrinth *labyrinth) {
 	labyrinth->walls_hexal_version.content = NULL;
 }
 
-void push_back_number(NumbersArray *num_array, size_t number) {
+void push_back_number(NumbersArray *num_array, const size_t number) {
 	if (num_array->allocated_size == num_array->size) {
 		num_array->array = realloc_wrapper(num_array->array,
 		                                   REALLOC_MULTIPLIER * num_array->allocated_size * sizeof(size_t));
@@ -36,6 +33,7 @@ void push_back_number(NumbersArray *num_array, size_t number) {
 	num_array->size++;
 }
 
+//todo this is inconsitent
 void init_string(String *str) {
 	str->content = malloc_wrapper(sizeof(char) * START_ARRAY_SIZE);
 	check_alloc(str->content);
@@ -49,12 +47,13 @@ void init_line(Line *line) {
 	line->state = true;
 }
 
-void insert(char *str, char to_insert, size_t location) {
+//todo think if this function should exist
+void insert(char *str, char to_insert, const size_t location) {
 	str[location] = to_insert;
 }
 
 //There is no guarantee that string wil be null terminated after this operation
-void str_insert(String *str, char to_insert, size_t location) {
+void insert_str(String *str, const char to_insert, const size_t location) {
 	while (location >= str->allocated_size) {
 		str->content = realloc_wrapper(str->content, sizeof(char) * REALLOC_MULTIPLIER * str->allocated_size);
 		check_alloc(str->content);
@@ -65,7 +64,7 @@ void str_insert(String *str, char to_insert, size_t location) {
 	str->size++;
 }
 
-void str_concat(String *str, char *to_concat) {
+void concat_str(String *str, char *to_concat) {
 	size_t to_concat_len = strlen(to_concat);
 	while (to_concat_len + str->size >= str->allocated_size) {
 		str->content = realloc_wrapper(str->content, sizeof(char) * REALLOC_MULTIPLIER * str->allocated_size);
@@ -84,18 +83,18 @@ void clear_str(String *str) {
 	str->size = 0;
 }
 
-size_t str_to_size_t(String *str) {
+size_t str_to_size_t(const String *str) {
 	char *str_end;
 
 	return strtoull(str->content, &str_end, 10);
 }
 
-void init_bool_array(BoolArray *bool_array, size_t size) {
+void init_bool_array(BoolArray *bool_array, const size_t size) {
 	bool_array->array = malloc(size * sizeof(bool));
 	check_alloc(bool_array->array);
 }
 
-String hexal_to_binary(String *hexal) {
+String hexal_to_binary(const String *hexal) {
 	String result;
 	init_string(&result);
 	size_t i = 0;
@@ -104,52 +103,52 @@ String hexal_to_binary(String *hexal) {
 		char character = hexal->content[i];
 		switch (tolower(character)) {
 			case '0':
-				str_insert(&result, '0', result.size);
+				insert_str(&result, '0', result.size);
 				break;
 			case '1':
-				str_insert(&result, '1', result.size);
+				insert_str(&result, '1', result.size);
 				break;
 			case '2':
-				str_concat(&result, "10");
+				concat_str(&result, "10");
 				break;
 			case '3':
-				str_concat(&result, "11");
+				concat_str(&result, "11");
 				break;
 			case '4':
-				str_concat(&result, "100");
+				concat_str(&result, "100");
 				break;
 			case '5':
-				str_concat(&result, "101");
+				concat_str(&result, "101");
 				break;
 			case '6':
-				str_concat(&result, "110");
+				concat_str(&result, "110");
 				break;
 			case '7':
-				str_concat(&result, "111");
+				concat_str(&result, "111");
 				break;
 			case '8':
-				str_concat(&result, "1000");
+				concat_str(&result, "1000");
 				break;
 			case '9':
-				str_concat(&result, "1001");
+				concat_str(&result, "1001");
 				break;
 			case 'a':
-				str_concat(&result, "1010");
+				concat_str(&result, "1010");
 				break;
 			case 'b':
-				str_concat(&result, "1011");
+				concat_str(&result, "1011");
 				break;
 			case 'c':
-				str_concat(&result, "1100");
+				concat_str(&result, "1100");
 				break;
 			case 'd':
-				str_concat(&result, "1101");
+				concat_str(&result, "1101");
 				break;
 			case 'e':
-				str_concat(&result, "1110");
+				concat_str(&result, "1110");
 				break;
 			case 'f':
-				str_concat(&result, "1111");
+				concat_str(&result, "1111");
 				break;
 			default:
 				break;
@@ -160,7 +159,7 @@ String hexal_to_binary(String *hexal) {
 }
 
 //There is a possibility of overflow, hence if.
-size_t count_array_product(NumbersArray *array, bool *overflow) {
+size_t array_product(const NumbersArray *array, bool *overflow) {
 	size_t result = 1;
 
 	for (size_t i = 0; i < array->size; i++) {
@@ -177,29 +176,71 @@ size_t count_array_product(NumbersArray *array, bool *overflow) {
 }
 
 void init_fifo(NumFIFO *fifo) {
-	fifo->array = malloc_wrapper(sizeof(size_t) * START_ARRAY_SIZE);
-	check_alloc(fifo->array);
-	fifo->size = 0;
-	fifo->allocated_size = START_ARRAY_SIZE;
+	init_numbers_array(&fifo->array);
 	fifo->first_pos = 0;
 }
 
-void enqueue(NumFIFO *fifo, size_t value) {
-	if (fifo->size >= fifo->allocated_size) {
-		fifo->array = realloc_wrapper(fifo->array, sizeof(size_t) * fifo->allocated_size * REALLOC_MULTIPLIER);
-		check_alloc(fifo->array);
-		fifo->allocated_size = fifo->allocated_size * REALLOC_MULTIPLIER;
-	}
+void enqueue(NumFIFO *fifo, const size_t value) {
+	push_back_number(&fifo->array, value);
 
-	fifo->array[fifo->size] = value;
-	fifo->size++;
 }
+
 //todo implement shrinking after first_pos > constant
 size_t dequeue(NumFIFO *fifo, bool *end) {
-	if (fifo->first_pos + 1 == fifo->size) {
+	if (fifo->first_pos + 1 == fifo->array.size) {
 		*end = true;
 		return 0;
 	} else {
-		return fifo->first_pos++;
+		return fifo->array.array[fifo->first_pos++];
 	}
 }
+
+BST *create_node(const size_t value) {
+	BST *node = malloc_wrapper(sizeof(BST));
+	node->right = NULL;
+	node->left = NULL;
+	node->value = value;
+	return node;
+}
+
+void insert_bst(BST **root, const size_t value) {
+
+	BST *root_cp = *root;
+
+	BST *root_cp_trail = NULL;
+
+	while (root_cp != NULL) {
+		root_cp_trail = root_cp;
+		if (value > root_cp->value)
+			root_cp = root_cp->right;
+		else
+			root_cp = root_cp->left;
+	}
+
+	if (root_cp_trail == NULL)
+		*root = create_node(value);
+	else if (value > root_cp_trail->value)
+		root_cp_trail->right = create_node(value);
+	else
+		root_cp_trail->left = create_node(value);
+}
+
+bool contains_bst(BST *root, const size_t value) {
+  BST *root_cp = root;
+
+	while (root_cp != NULL) {
+		if (root_cp->value == value)
+			return true;
+
+		if (root_cp->value > value)
+			root_cp = root_cp->right;
+		else
+			root_cp = root_cp->left;
+	}
+
+	return false;
+
+}
+
+
+

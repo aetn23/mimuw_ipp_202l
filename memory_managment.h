@@ -23,4 +23,9 @@ void free_labyrinth(Labyrinth *labyrinth);
 
 void free_queue(NumFIFO *fifo);
 
+
+//todo rewrite this iteratively
+void free_tree(BST *node);
+
+
 #endif //_MEMORY_MANAGMENT_

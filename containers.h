@@ -22,11 +22,12 @@ typedef struct NumbersArray {
 	size_t allocated_size;
 } NumbersArray;
 
+/*
 typedef struct Block {
 	coordinate_t *coordinates;
 } Block;
 
-/*
+
 typedef struct Labyrinth {
 	dimension_t *dimensions;
 	size_t dimensions_size;
@@ -66,37 +67,47 @@ typedef struct Line {
 //To mitigate memory effectiveness of array FIFO I will reallocate it every x
 //elements.
 typedef struct NumFIFO {
-	size_t *array;
-	size_t first_pos, allocated_size, size;
+	NumbersArray array;
+	size_t first_pos;
 } NumFIFO;
 
+typedef struct BST BST;
+
+typedef struct BST {
+	size_t value;
+	BST *left, *right;
+} BST;
+
 void init_fifo(NumFIFO *fifo);
-void enqueue(NumFIFO *fifo, size_t value);
+void enqueue(NumFIFO *fifo, const size_t value);
 size_t dequeue(NumFIFO *fifo, bool *end);
 
 void init_labyrinth (Labyrinth *labyrinth);
-void init_block (Block *block);
 void init_numbers_array (NumbersArray *num_array);
-void push_back_number(NumbersArray *num_array, size_t number);
+void push_back_number(NumbersArray *num_array, const size_t number);
 
-void init_bool_array(BoolArray *bool_array, size_t size);
+void init_bool_array(BoolArray *bool_array, const size_t size);
 
 void init_line(Line *line);
 
 void init_string(String *line);
 
-void insert(char *string, char to_insert, size_t location);
+void insert(char *string, const char to_insert, const size_t location);
 
-void str_insert(String *str, char to_insert, size_t location);
+void insert_str(String *str, const char to_insert, const size_t location);
 
 void clear_str(String *str);
 
-String hexal_to_binary(String *str);
+String hexal_to_binary(const String *str);
 
-size_t str_to_size_t(String *str);
+size_t str_to_size_t(const String *str);
 
-size_t count_array_product(NumbersArray *array, bool *overflow);
+size_t array_product(const NumbersArray *array, bool *overflow);
 
+void insert_bst(BST **root, const size_t value);
 
+BST *create_node (const size_t value);
+
+bool contains_bst(BST *root, const size_t value);
 
 #endif //_TYPES_H

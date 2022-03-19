@@ -1,36 +1,28 @@
+#include <stdio.h>
+
 #include "containers.h"
 #include "parse.h"
 #include "memory_managment.h"
 
 int main() {
+	/*
 	Labyrinth labyrinth;
 	parse(&labyrinth);
 	free_labyrinth(&labyrinth);
 
+*/
 
-	NumFIFO fifo;
-	bool end = false;
-	init_fifo(&fifo);
-	enqueue(&fifo, 1);
-	enqueue(&fifo, 1);
-	enqueue(&fifo, 1);
-	enqueue(&fifo, 1);
-	enqueue(&fifo, 1);
-	enqueue(&fifo, 1);
-	dequeue(&fifo, &end);
-	dequeue(&fifo, &end);
-	dequeue(&fifo, &end);
-	dequeue(&fifo, &end);
-	dequeue(&fifo, &end);
-	dequeue(&fifo, &end);
-	dequeue(&fifo, &end);
-	dequeue(&fifo, &end);
-	dequeue(&fifo, &end);
-	dequeue(&fifo, &end);
-	dequeue(&fifo, &end);
-	dequeue(&fifo, &end);
-	dequeue(&fifo, &end);
-	dequeue(&fifo, &end);
-	free_queue(&fifo);
+
+	BST *tree = NULL;
+	insert_bst(&tree, 4);
+	insert_bst(&tree, 5);
+	insert_bst(&tree, 6);
+	insert_bst(&tree, 7);
+	insert_bst(&tree, 1);
+	insert_bst(&tree, 123);
+	contains_bst(tree, 123);
+	printf("%zu\n", tree->value);
+	free_tree(tree);
+
 	return 0;
 }

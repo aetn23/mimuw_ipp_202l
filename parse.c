@@ -1,3 +1,4 @@
+//getline() requires this to be defined.
 #define _POSIX_C_SOURCE 200809L
 
 #include <stdio.h>
@@ -37,23 +38,25 @@ bool parse_first_3_lines_helper(NumbersArray *numbers, Line *line,
 	for (; i < line->size; i++) {
 		char character = line->content[i];
 
+		if (!(isspace(character) || isdigit(character))) {
+			handle_wrong_input(line_number);
+
+			free_string(&number_as_string);
+
+			return false;
+		}
+
 		if (is_previous_blank) {
 			if (isspace(character)) {
 				continue;
 			} else if (isdigit(character)) {
 				is_previous_blank = false;
 
-				str_insert(&number_as_string, character, 0);
-			} else {
-				handle_wrong_input(line_number);
-
-				free_string(&number_as_string);
-
-				return false;
+				insert_str(&number_as_string, character, 0);
 			}
 		} else {
 			if (isspace(character)) {
-				str_insert(&number_as_string, '\0', number_as_string.size);
+				insert_str(&number_as_string, '\0', number_as_string.size);
 
 				size_t number = str_to_size_t(&number_as_string);
 				if (errno == ERANGE || number == 0) {
@@ -69,13 +72,7 @@ bool parse_first_3_lines_helper(NumbersArray *numbers, Line *line,
 
 				is_previous_blank = true;
 			} else if (isdigit(character)) {
-				str_insert(&number_as_string, character, number_as_string.size);
-			} else {
-				handle_wrong_input(line_number);
-
-				free_string(&number_as_string);
-
-				return false;
+				insert_str(&number_as_string, character, number_as_string.size);
 			}
 		}
 	}
@@ -96,9 +93,9 @@ bool parse_first_3_lines(Labyrinth *labyrinth, Line *line, size_t line_number) {
 		return false;
 	}
 
-	if (labyrinth->dimensions == NULL) {
+	if (line_number == 1) {
 		bool overflow = false;
-		labyrinth->block_count = count_array_product(&numbers, &overflow);
+		labyrinth->block_count = array_product(&numbers, &overflow);
 		if (overflow) {
 			free_numbers_array(&numbers);
 			handle_wrong_input(line_number);
@@ -116,13 +113,13 @@ bool parse_first_3_lines(Labyrinth *labyrinth, Line *line, size_t line_number) {
 		handle_wrong_input(line_number);
 
 		return false;
-	} else if (labyrinth->start == 0) {
+	} else if (line_number == 2) {
 		//labyrinth->start.coordinates = numbers.array;
 		//labyrinth->start.coordinates = realloc_wrapper(labyrinth->start.coordinates,
 		 //                                              sizeof(size_t) * labyrinth->dimensions_size);
 		 //free(numbers.array);
 		free_numbers_array(&numbers);
-	} else if (labyrinth->finish == 0) {
+	} else if (line_number == 3) {
 		//labyrinth->finish.coordinates = numbers.array;
 		//labyrinth->finish.coordinates = realloc_wrapper(labyrinth->finish.coordinates,
 		 //                                               sizeof(size_t) * labyrinth->dimensions_size);
@@ -178,7 +175,7 @@ bool parse_fourth_line_helper(String *result_hexal_variant,
 		//Skip the last character, which is blank
 		for (; i < line->size - 1; i++) {
 			if(isxdigit(character)) {
-				str_insert(result_hexal_variant, character, result_hexal_variant->size);
+				insert_str(result_hexal_variant, character, result_hexal_variant->size);
 				continue;
 			}
 

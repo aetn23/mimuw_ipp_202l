@@ -40,6 +40,16 @@ void free_labyrinth(Labyrinth *labyrinth) {
 }
 
 void free_queue(NumFIFO *fifo) {
-	if (fifo->array != NULL)
-		free(fifo->array);
+	free_numbers_array(&fifo->array);
+}
+
+void free_tree(BST *node) {
+
+	if (node->left != NULL) {
+		free_tree(node->left);
+	}
+	if (node->right != NULL) {
+		free_tree(node->right);
+	}
+	free(node);
 }
