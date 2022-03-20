@@ -18,8 +18,8 @@ typedef struct NumFIFO {
 
 
 void init_fifo(NumFIFO *fifo);
-void enqueue(NumFIFO *fifo, const size_t value);
+void enqueue(NumFIFO *fifo, size_t value);
 size_t dequeue(NumFIFO *fifo, bool *end);
-
+bool is_empty_queue(NumFIFO *queue);
 
 #endif //_QUEUE_

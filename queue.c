@@ -19,3 +19,7 @@ size_t dequeue(NumFIFO *fifo, bool *end) {
 		return fifo->array.array[fifo->first_pos++];
 	}
 }
+
+bool is_empty_queue(NumFIFO *queue) {
+	return queue->first_pos == queue->array.size;
+}

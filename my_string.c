@@ -66,33 +66,33 @@ String hexal_to_binary(const String *hexal) {
 	String result;
 	init_string(&result);
 	size_t i = 0;
-
+	//printf("%s\n", hexal->content);
 	for (; i < hexal->size; i++) {
 		char character = hexal->content[i];
 		switch (tolower(character)) {
 			case '0':
-				insert_str(&result, '0', result.size);
+				concat_str(&result, "0000");
 				break;
 			case '1':
-				insert_str(&result, '1', result.size);
+				concat_str(&result, "0001");
 				break;
 			case '2':
-				concat_str(&result, "10");
+				concat_str(&result, "0010");
 				break;
 			case '3':
-				concat_str(&result, "11");
+				concat_str(&result, "0011");
 				break;
 			case '4':
-				concat_str(&result, "100");
+				concat_str(&result, "0100");
 				break;
 			case '5':
-				concat_str(&result, "101");
+				concat_str(&result, "0101");
 				break;
 			case '6':
-				concat_str(&result, "110");
+				concat_str(&result, "0110");
 				break;
 			case '7':
-				concat_str(&result, "111");
+				concat_str(&result, "0111");
 				break;
 			case '8':
 				concat_str(&result, "1000");
@@ -122,6 +122,6 @@ String hexal_to_binary(const String *hexal) {
 				break;
 		}
 	}
-
+	insert_str(&result, '\0', result.size);
 	return result;
 }

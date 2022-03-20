@@ -6,7 +6,25 @@
 
 int main() {
 	Labyrinth labyrinth;
-	parse(&labyrinth);
+	bool good_indput = parse(&labyrinth);
+	/*
+	NumbersArray array;
+	init_numbers_array(&array);
+	array.array = malloc_wrapper(sizeof(size_t) * labyrinth.dimensions.size);
+	array.size = labyrinth.dimensions.size;
+	//printf("%s\n", labyrinth.walls_hexal_version.content);
+	for (size_t i = 0; i < labyrinth.block_count; i++) {
+		bool result = is_wall(i, &labyrinth, &array);
+		if (result) {
+			if (i != 0 ) printf_array(&array);
+		}
+		//is_wall(i, &labyrinth, &array);
+	}
+	free_numbers_array(&array);
+	 */
+	if(good_indput)
+		get_result(&labyrinth);
+
 	free_labyrinth(&labyrinth);
 
 
@@ -19,7 +37,6 @@ int main() {
 	insert_bst(&tree, 1);
 	insert_bst(&tree, 123);
 	contains_bst(tree, 123);
-	printf("%zu\n", tree->value);
 	free_tree(tree);
 
 	return 0;

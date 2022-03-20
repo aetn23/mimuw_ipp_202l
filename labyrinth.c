@@ -1,10 +1,8 @@
-#include <stdio.h>
 #include <string.h>
-#include <ctype.h>
-#include <stdint.h>
 
 #include "labyrinth.h"
 #include "memory_managment.h"
+#include "queue.h"
 
 
 void init_labyrinth(Labyrinth *labyrinth) {
@@ -47,28 +45,106 @@ void number_rep_to_array_rep (const size_t number, const Labyrinth *labyrinth,
 	}
 }
 
-void get_neighbours(size_t block, const Labyrinth *labyrinth, NumbersArray *result) {
+//todo check if neighbour is a wall
+void get_neighbours(size_t block, const Labyrinth *labyrinth, NumFIFO *result) {
 	bool overflow = false;
 	size_t neighbour_distance = 0;
-	size_t i = 0, j = 0;
+	size_t i = 0;
 
 	while(neighbour_distance != 1) {
 		 neighbour_distance = array_product(&labyrinth->dimensions,
-																							&overflow, j + 1,
+																							&overflow, i + 1,
 																							labyrinth->dimensions.size);
 
-		if (block >= neighbour_distance) {
-			result->array[i] = block - neighbour_distance;
-			result->size++;
-			++i;
-		}
-		if (block + neighbour_distance < labyrinth->block_count) {
-			result->array[i] = block + neighbour_distance;
-			result->size++;
-			i++;
-		}
+		if (block >= neighbour_distance)
+			enqueue(result, block - neighbour_distance);
+		if (block + neighbour_distance < labyrinth->block_count)
+			enqueue(result, block + neighbour_distance);
+
 
 		//printf("%zu\n", neighbour_distance);
-		j++;
+		i++;
 	}
+}
+
+//todo think if emplace calculation is better and think of speeding up array_prodcut by
+//calculating it in array
+bool is_wall(size_t block, Labyrinth *labyrinth, NumbersArray *helper_array) {
+	if (labyrinth->is_hexal_version) {
+		number_rep_to_array_rep(block, labyrinth, helper_array);
+		//printf_array(helper_array);
+		bool overflow = false;
+		size_t position = 0;
+
+		for (size_t i = 0; i < helper_array->size; i++) {
+			position += (helper_array->array[i] - 1) * array_product(&labyrinth->dimensions, &overflow, 0, i);
+		}
+
+		return labyrinth->walls_hexal_version.content[position] == '1';
+	}
+	return false;
+}
+
+//todo get length
+size_t get_result (Labyrinth *labyrinth) {
+	NumFIFO queue;
+	init_fifo(&queue);
+	queue.array.array = malloc_wrapper(sizeof(size_t) * START_ARRAY_SIZE);
+	queue.array.allocated_size = START_ARRAY_SIZE;
+	bool queue_end = false;
+
+	NumbersArray helper_array;
+	init_numbers_array(&helper_array);
+	helper_array.array = malloc_wrapper(sizeof(size_t) * labyrinth->dimensions.size);
+	helper_array.allocated_size = labyrinth->dimensions.size;
+	helper_array.size = labyrinth->dimensions.size;
+
+	BST *visited;
+	visited = NULL;
+
+	size_t block = labyrinth->start;
+
+	//debug
+	NumbersArray debug;
+	debug.array = malloc_wrapper(sizeof(size_t)*labyrinth->dimensions.size);
+	debug.size = labyrinth->dimensions.size;
+	debug.allocated_size = labyrinth->dimensions.size;
+
+	get_neighbours(labyrinth->start, labyrinth, &queue);
+	while(!is_empty_queue(&queue)) {
+
+
+
+
+
+		printf("Processing this block: \n");
+		number_rep_to_array_rep(block, labyrinth, &debug);
+		printf_array(&debug);
+		if (contains_bst(visited, block)) {
+			block = dequeue(&queue, &queue_end);
+			continue;
+		}
+		if (block == labyrinth->finish) {
+			free_queue(&queue);
+			free_numbers_array(&helper_array);
+			free_tree(visited);
+			free_numbers_array(&debug);
+			return 2137;
+		}
+		else {
+			//todo this queue end is redundant
+			block = dequeue(&queue, &queue_end);
+			if (is_wall(block, labyrinth, &helper_array))
+				continue;
+
+			insert_bst(&visited, block);
+			//todo this function should check if there are walls
+			get_neighbours(block, labyrinth, &queue);
+		}
+	}
+	free_queue(&queue);
+	free_numbers_array(&helper_array);
+	free_tree(visited);
+
+	return 0;
 }
