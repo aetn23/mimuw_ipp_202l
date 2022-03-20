@@ -51,5 +51,6 @@ void free_tree(BST *node) {
 	if (node->right != NULL) {
 		free_tree(node->right);
 	}
-	free(node);
+	if (node != NULL)
+		free(node);
 }

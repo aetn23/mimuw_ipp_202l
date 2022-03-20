@@ -110,41 +110,32 @@ size_t get_result (Labyrinth *labyrinth) {
 	debug.size = labyrinth->dimensions.size;
 	debug.allocated_size = labyrinth->dimensions.size;
 
-	get_neighbours(labyrinth->start, labyrinth, &queue);
+
+	insert_bst(&visited, block);
+	get_neighbours(block, labyrinth, &queue);
+
 	while(!is_empty_queue(&queue)) {
-
-
-
-
-
-		printf("Processing this block: \n");
-		number_rep_to_array_rep(block, labyrinth, &debug);
-		printf_array(&debug);
-		if (contains_bst(visited, block)) {
-			block = dequeue(&queue, &queue_end);
-			continue;
-		}
 		if (block == labyrinth->finish) {
-			free_queue(&queue);
-			free_numbers_array(&helper_array);
-			free_tree(visited);
-			free_numbers_array(&debug);
-			return 2137;
+			number_rep_to_array_rep(block, labyrinth, &debug);
+			printf("Znalezione: %zu\n", block);
+			printf_array(&debug);
+			break;
 		}
-		else {
-			//todo this queue end is redundant
-			block = dequeue(&queue, &queue_end);
-			if (is_wall(block, labyrinth, &helper_array))
-				continue;
 
-			insert_bst(&visited, block);
-			//todo this function should check if there are walls
-			get_neighbours(block, labyrinth, &queue);
-		}
+		insert_bst(&visited, block);
+
+		do {
+			block = dequeue(&queue, &queue_end);
+			if (queue_end)
+				break;
+		} while(is_wall(block, labyrinth, &helper_array) || contains_bst(visited, block));
+		get_neighbours(block, labyrinth, &queue);
+
 	}
+
 	free_queue(&queue);
 	free_numbers_array(&helper_array);
 	free_tree(visited);
-
+	free_numbers_array(&debug);
 	return 0;
 }
