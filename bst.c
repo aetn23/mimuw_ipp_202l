@@ -38,7 +38,7 @@ bool contains_bst(BST *root, const size_t value) {
 		if (root_cp->value == value)
 			return true;
 
-		if (root_cp->value > value)
+		if (root_cp->value < value)
 			root_cp = root_cp->right;
 		else
 			root_cp = root_cp->left;

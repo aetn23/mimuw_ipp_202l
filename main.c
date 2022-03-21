@@ -23,7 +23,7 @@ int main() {
 	free_numbers_array(&array);
 	 */
 	if(good_indput)
-		get_result(&labyrinth);
+		printf("%zu\n" ,get_result(&labyrinth));
 
 	free_labyrinth(&labyrinth);
 

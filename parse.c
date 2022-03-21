@@ -33,11 +33,9 @@ Line read_line() {
 //for some godless reasons in this task coordinates to start block are given
 //incorrectly ie counting from right down, which is different from the rest of
 //the task.
-void fix_order(NumbersArray *array) {
+void fix_order(NumbersArray *array, Labyrinth *labyrinth) {
 	for (size_t i = 0; i < array->size; i++) {
-		size_t tmp = array->array[i];
-		array->array[i] = array->array[array->size - i - 1];
-		array->array[array->size - i - 1] = tmp;
+		array->array[i] = labyrinth->dimensions.array[i] - array->array[i] + 1;
 	}
 }
 
@@ -127,7 +125,7 @@ bool parse_first_3_lines(Labyrinth *labyrinth, Line *line, size_t line_number) {
 
 		return false;
 	} else if (line_number == 2) {
-		fix_order(&numbers);
+		fix_order(&numbers, labyrinth);
 		/*
 		size_t arra_rep_to_num = array_rep_to_number_rep(&numbers, labyrinth);
 		printf("%zu\n", arra_rep_to_num);
@@ -147,7 +145,7 @@ bool parse_first_3_lines(Labyrinth *labyrinth, Line *line, size_t line_number) {
 		free_numbers_array(&numbers);
 
 	} else if (line_number == 3) {
-		fix_order(&numbers);
+		fix_order(&numbers, labyrinth);
 
 		labyrinth->finish = array_rep_to_number_rep(&numbers, labyrinth);
 		free_numbers_array(&numbers);
@@ -260,6 +258,9 @@ bool parse(Labyrinth *labyrinth) {
 	bool success = true;
 
 	while (true) {
+		//debug
+		if (lines_count == 5)
+			return true;
 		line = read_line();
 
 		if (!line.state && lines_count == MAX_NUM_LINES + 1) {
