@@ -10,6 +10,7 @@
 
 typedef struct Labyrinth {
 	NumbersArray dimensions;
+	NumbersArray partial_array;
 	size_t block_count;
 	size_t start, finish;
 	union {

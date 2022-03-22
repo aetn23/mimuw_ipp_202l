@@ -27,4 +27,6 @@ void init_bool_array(BoolArray *bool_array, size_t size);
 size_t array_product(const NumbersArray *array, bool *overflow, size_t begin, size_t end);
 
 void printf_array(NumbersArray *array);
+
+void calculate_partial_sums (NumbersArray *array, NumbersArray *result);
 #endif //_ARRAYS_

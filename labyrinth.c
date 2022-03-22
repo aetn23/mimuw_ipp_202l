@@ -45,45 +45,6 @@ void number_rep_to_array_rep(const size_t number, const Labyrinth *labyrinth,
 	}
 }
 
-//todo check if neighbour is a wall
-void get_neighbours_old(size_t block, const Labyrinth *labyrinth, NumFIFO *result) {
-	bool overflow = false;
-	size_t neighbour_distance = 0;
-	size_t i = 0;
-
-	NumbersArray debug;
-	init_numbers_array(&debug);
-	debug.array = malloc_wrapper(sizeof(size_t) * labyrinth->dimensions.size);
-	debug.size = labyrinth->dimensions.size;
-	debug.allocated_size = labyrinth->dimensions.size;
-
-	printf("Block : ");
-	number_rep_to_array_rep(block, labyrinth, &debug);
-	printf_array(&debug);
-
-	while (neighbour_distance != 1) {
-		neighbour_distance = array_product(&labyrinth->dimensions,
-		                                   &overflow, i + 1,
-		                                   labyrinth->dimensions.size);
-
-		if (block >= neighbour_distance) {
-			enqueue(result, block - neighbour_distance);
-			number_rep_to_array_rep(block - neighbour_distance, labyrinth, &debug);
-			printf_array(&debug);
-		}
-		if (block + neighbour_distance < labyrinth->block_count) {
-			enqueue(result, block + neighbour_distance);
-			number_rep_to_array_rep(block + neighbour_distance, labyrinth, &debug);
-			printf_array(&debug);
-		}
-
-
-		//printf("%zu\n", neighbour_distance);
-		i++;
-	}
-	printf("\n\n");
-	free_numbers_array(&debug);
-}
 
 //todo think if emplace calculation is better and think of speeding up array_prodcut by
 //calculating it in array
@@ -99,44 +60,15 @@ bool is_wall(size_t block, Labyrinth *labyrinth, NumbersArray *helper_array) {
 		for (size_t i = 0; i < helper_array->size; i++) {
 			position += (helper_array->array[i] - 1) * array_product(&labyrinth->dimensions, &overflow, 0, i);
 		}
-		if (labyrinth->walls_hexal_version.content[position] == '1')
-			printf("ściana\n");
+		if (position >= labyrinth->walls_hexal_version.size)
+			return false;
+
 		return labyrinth->walls_hexal_version.content[position] == '1';
 	}
 	return false;
 }
 
 
-void get_neighbours(size_t block, const Labyrinth *labyrinth, NumFIFO *result) {
-	size_t i = 0;
-
-
-	NumbersArray array_rep;
-	init_numbers_array(&array_rep);
-	array_rep.array = malloc_wrapper(sizeof(size_t) * labyrinth->dimensions.size);
-	array_rep.size = labyrinth->dimensions.size;
-	array_rep.allocated_size = labyrinth->dimensions.size;
-
-	//printf("Block \n: ");
-	number_rep_to_array_rep(block, labyrinth, &array_rep);
-	printf_array(&array_rep);
-	for (; i < array_rep.size; i++) {
-		if (array_rep.array[i] - 1 > 0) {
-			array_rep.array[i] = array_rep.array[i] - 1;
-			//printf_array(&array_rep);
-			enqueue(result, array_rep_to_number_rep(&array_rep, labyrinth));
-			array_rep.array[i] = array_rep.array[i] + 1;
-		}
-		if (array_rep.array[i] + 1 <= labyrinth->dimensions.array[i]) {
-			array_rep.array[i] = array_rep.array[i] + 1;
-			//printf_array(&array_rep);
-			enqueue(result, array_rep_to_number_rep(&array_rep, labyrinth));
-			array_rep.array[i] = array_rep.array[i] - 1;
-		}
-	}
-	printf("\n\n");
-	free_numbers_array(&array_rep);
-}
 
 void get_new_neighbours(size_t block, Labyrinth *labyrinth, NumFIFO *result, BST *visited, NumbersArray *helper_array) {
 	size_t i = 0;
@@ -149,9 +81,9 @@ void get_new_neighbours(size_t block, Labyrinth *labyrinth, NumFIFO *result, BST
 	array_rep.size = labyrinth->dimensions.size;
 	array_rep.allocated_size = labyrinth->dimensions.size;
 
-	printf("Block : ");
+	//printf("Block : ");
 	number_rep_to_array_rep(block, labyrinth, &array_rep);
-	printf_array(&array_rep);
+	//printf_array(&array_rep);
 	for (; i < array_rep.size; i++) {
 		if (array_rep.array[i] - 1 > 0) {
 			array_rep.array[i] = array_rep.array[i] - 1;
@@ -159,7 +91,7 @@ void get_new_neighbours(size_t block, Labyrinth *labyrinth, NumFIFO *result, BST
 			neighbour = array_rep_to_number_rep(&array_rep, labyrinth);
 			if(!contains_bst(visited, neighbour) && !is_wall(neighbour, labyrinth, helper_array)) {
 				enqueue(result, neighbour);
-				printf_array(&array_rep);
+				//printf_array(&array_rep);
 			}
 
 			array_rep.array[i] = array_rep.array[i] + 1;
@@ -170,12 +102,12 @@ void get_new_neighbours(size_t block, Labyrinth *labyrinth, NumFIFO *result, BST
 
 			if(!contains_bst(visited, neighbour) && !is_wall(neighbour, labyrinth, helper_array)) {
 				enqueue(result, neighbour);
-				printf_array(&array_rep);
+				//printf_array(&array_rep);
 			}
 			array_rep.array[i] = array_rep.array[i] - 1;
 		}
 	}
-	printf("\n\n");
+	//printf("\n\n");
 	free_numbers_array(&array_rep);
 }
 
@@ -228,6 +160,7 @@ size_t get_result(Labyrinth *labyrinth) {
 	insert_bst(&visited, block);
 	get_new_neighbours(block, labyrinth, active_queue, visited, &helper_array);
 	while (!(is_empty_queue(&queue_0) && is_empty_queue(&queue_1))) {
+		//printf("len: %zu\n ", length);
 		block = dequeue(active_queue, &queue_end);
 		if (queue_end) {
 			active_queue = queue_0_active ? &queue_1 : &queue_0;

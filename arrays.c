@@ -49,3 +49,9 @@ void printf_array(NumbersArray *array) {
 	printf("\n");
 }
 
+void calculate_partial_sums (NumbersArray *array, NumbersArray *result) {
+	result->array[0] = array->array[0];
+	for (size_t i = 1; i < array->size; i++) {
+		result->array[i] = result->array[i - 1] * array->array[i];
+	}
+}

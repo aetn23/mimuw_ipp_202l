@@ -9,6 +9,7 @@ BST *create_node(const size_t value) {
 	return node;
 }
 
+//todo disallow double insert
 void insert_bst(BST **root, const size_t value) {
 
 	BST *root_cp = *root;
@@ -17,6 +18,7 @@ void insert_bst(BST **root, const size_t value) {
 
 	while (root_cp != NULL) {
 		root_cp_trail = root_cp;
+
 		if (value > root_cp->value)
 			root_cp = root_cp->right;
 		else

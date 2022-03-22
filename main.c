@@ -7,21 +7,13 @@
 int main() {
 	Labyrinth labyrinth;
 	bool good_indput = parse(&labyrinth);
-	/*
-	NumbersArray array;
-	init_numbers_array(&array);
-	array.array = malloc_wrapper(sizeof(size_t) * labyrinth.dimensions.size);
-	array.size = labyrinth.dimensions.size;
-	//printf("%s\n", labyrinth.walls_hexal_version.content);
-	for (size_t i = 0; i < labyrinth.block_count; i++) {
-		bool result = is_wall(i, &labyrinth, &array);
-		if (result) {
-			if (i != 0 ) printf_array(&array);
-		}
-		//is_wall(i, &labyrinth, &array);
-	}
-	free_numbers_array(&array);
-	 */
+
+	labyrinth.partial_array.array = malloc_wrapper(labyrinth.dimensions.size * sizeof(size_t));
+	labyrinth.partial_array.size = labyrinth.dimensions.size;
+	labyrinth.partial_array.allocated_size = labyrinth.dimensions.size;
+
+	calculate_partial_sums(&labyrinth.dimensions, &labyrinth.partial_array);
+
 	if(good_indput)
 		printf("%zu\n" ,get_result(&labyrinth));
 
