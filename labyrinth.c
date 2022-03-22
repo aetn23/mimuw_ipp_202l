@@ -58,7 +58,7 @@ bool is_wall(size_t block, Labyrinth *labyrinth, NumbersArray *helper_array) {
 		size_t position = 0;
 
 		for (size_t i = 0; i < helper_array->size; i++) {
-			position += (helper_array->array[i] - 1) * array_product(&labyrinth->dimensions, &overflow, 0, i);
+			position += (helper_array->array[i] - 1) * labyrinth->partial_array.array[i];
 		}
 		if (position >= labyrinth->walls_hexal_version.size)
 			return false;

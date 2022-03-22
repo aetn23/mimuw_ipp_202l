@@ -37,6 +37,7 @@ void free_labyrinth(Labyrinth *labyrinth) {
 		free(labyrinth->walls_hexal_version.content);
 	else if (!labyrinth->is_hexal_version && labyrinth->walls_R_version.array != NULL)
 		free(labyrinth->walls_R_version.array);
+	free_numbers_array(&labyrinth->partial_array);
 }
 
 void free_queue(NumFIFO *fifo) {
