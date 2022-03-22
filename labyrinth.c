@@ -13,8 +13,8 @@
 
 
 
-void init_labyrinth(Labyrinth *labyrinth) {
-	init_numbers_array(&labyrinth->dimensions);
+void init_labyrinth(Labyrinth *labyrinth, size_t alloc_size) {
+	init_numbers_array(&labyrinth->dimensions, alloc_size);
 	labyrinth->start = 0;
 	labyrinth->finish = 0;
 	labyrinth->is_hexal_version = false;
@@ -120,16 +120,10 @@ size_t get_result(Labyrinth *labyrinth) {
 	bool found = false;
 
 	NumFIFO queue_0;
-	init_fifo(&queue_0);
-	queue_0.array.array = malloc_wrapper(sizeof(size_t) * START_ARRAY_SIZE);
-	queue_0.array.allocated_size = START_ARRAY_SIZE;
-	queue_0.array.size = 0;
+	init_fifo(&queue_0, START_ARRAY_SIZE);
 
 	NumFIFO queue_1;
-	init_fifo(&queue_1);
-	queue_1.array.array = malloc_wrapper(sizeof(size_t) * START_ARRAY_SIZE);
-	queue_1.array.allocated_size = START_ARRAY_SIZE;
-	queue_1.array.size = 0;
+	init_fifo(&queue_1, START_ARRAY_SIZE);
 
 	NumFIFO *active_queue = &queue_0;
 	NumFIFO *non_active_queue = &queue_1;
@@ -142,15 +136,11 @@ size_t get_result(Labyrinth *labyrinth) {
 	bool queue_end = false;
 
 	NumbersArray helper_array1;
-	init_numbers_array(&helper_array1);
-	helper_array1.array = malloc_wrapper(sizeof(size_t) * labyrinth->dimensions.size);
-	helper_array1.allocated_size = labyrinth->dimensions.size;
+	init_numbers_array(&helper_array1, labyrinth->dimensions.size);
 	helper_array1.size = labyrinth->dimensions.size;
 
 	NumbersArray helper_array2;
-	init_numbers_array(&helper_array2);
-	helper_array2.array = malloc_wrapper(sizeof(size_t) * labyrinth->dimensions.size);
-	helper_array2.allocated_size = labyrinth->dimensions.size;
+	init_numbers_array(&helper_array2, labyrinth->dimensions.size);
 	helper_array2.size = labyrinth->dimensions.size;
 
 	BST *visited;
@@ -187,10 +177,12 @@ size_t get_result(Labyrinth *labyrinth) {
 		//insert_bst(&visited, block);
 		get_new_neighbours(block, labyrinth, non_active_queue, visited, &helper_array1, &helper_array2);
 	}
+	/*
 	printf("%zu\n", queue_0.array.size);
 	printf("%zu\n", queue_1.array.size);
 	if (contains_bst(visited, 383970))
-		printf("Zaweira 383970");
+	
+		printf("Zaweira 383970");*/
 	//print_tree(visited);
 	//printf("%zu\n", visited);
 

@@ -95,9 +95,7 @@ bool parse_first_3_lines_helper(NumbersArray *numbers, Line *line,
 
 bool parse_first_3_lines(Labyrinth *labyrinth, Line *line, size_t line_number) {
 	NumbersArray numbers;
-	init_numbers_array(&numbers);
-	numbers.array = malloc_wrapper(sizeof(size_t) * START_ARRAY_SIZE);
-	numbers.allocated_size = START_ARRAY_SIZE;
+	init_numbers_array(&numbers, START_ARRAY_SIZE);
 
 	if (!parse_first_3_lines_helper(&numbers, line, line_number)) {
 		free_numbers_array(&numbers);
@@ -220,7 +218,7 @@ bool parse_fourth_line(Labyrinth *labyrinth, Line *line, size_t line_number) {
 	String result_hexal_variant;
 	init_string(&result_hexal_variant);
 	NumbersArray result_R_variant;
-	init_numbers_array(&result_R_variant);
+	init_numbers_array(&result_R_variant, 0);
 
 	if (!parse_fourth_line_helper(&result_hexal_variant, &result_R_variant, line,
 	                              line_number)) {
@@ -251,7 +249,7 @@ bool parse_fourth_line(Labyrinth *labyrinth, Line *line, size_t line_number) {
 }
 
 bool parse(Labyrinth *labyrinth) {
-	init_labyrinth(labyrinth);
+	init_labyrinth(labyrinth, 0);
 	Line line;
 	init_line(&line);
 	size_t lines_count = 1;

@@ -1,7 +1,7 @@
 #include "queue.h"
 
-void init_fifo(NumFIFO *fifo) {
-	init_numbers_array(&fifo->array);
+void init_fifo(NumFIFO *fifo, size_t alloc_size) {
+	init_numbers_array(&fifo->array, alloc_size);
 	fifo->first_pos = 0;
 }
 

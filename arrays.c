@@ -20,9 +20,16 @@ size_t array_product(const NumbersArray *array, bool *overflow, size_t begin, si
 	return result;
 }
 
-void init_bool_array(BoolArray *bool_array, const size_t size) {
+void init_bool_array(BoolArray *bool_array, const size_t size, bool alloc) {
+	if (alloc) {
 	bool_array->array = malloc(size * sizeof(bool));
+	bool_array->size = size;
 	check_alloc(bool_array->array);
+	}
+	else {
+		bool_array->array = NULL;
+		bool_array->size = 0;
+	}
 }
 
 void push_back_number(NumbersArray *num_array, const size_t number) {
@@ -36,10 +43,16 @@ void push_back_number(NumbersArray *num_array, const size_t number) {
 	num_array->size++;
 }
 
-void init_numbers_array(NumbersArray *num_array) {
+void init_numbers_array(NumbersArray *num_array, size_t alloc_size) {
+	if (alloc_size > 0) {
+		num_array->array = malloc_wrapper(alloc_size * sizeof(size_t));
+		num_array->size = 0;
+		num_array->allocated_size = alloc_size;
+	} else {
 	num_array->array = NULL;
 	num_array->size = 0;
 	num_array->allocated_size = 0;
+	}
 }
 
 void printf_array(NumbersArray *array) {

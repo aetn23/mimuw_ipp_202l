@@ -21,7 +21,7 @@ typedef struct Labyrinth {
 
 } Labyrinth;
 
-void init_labyrinth (Labyrinth *labyrinth);
+void init_labyrinth(Labyrinth *labyrinth, size_t alloc_size);
 
 size_t array_rep_to_number_rep (const NumbersArray *array, const Labyrinth *labyrinth);
 
