@@ -74,9 +74,6 @@ void get_new_neighbours(size_t block, Labyrinth *labyrinth, NumFIFO *result, BST
 	size_t i = 0;
 	size_t neighbour;
 
-
-
-
 	//printf("Block : ");
 	number_rep_to_array_rep(block, labyrinth, helper_array1);
 	//printf_array(&array_rep);
@@ -87,7 +84,8 @@ void get_new_neighbours(size_t block, Labyrinth *labyrinth, NumFIFO *result, BST
 			neighbour = array_rep_to_number_rep(helper_array1, labyrinth);
 			if(!contains_bst(visited, neighbour) && !is_wall(neighbour, labyrinth, helper_array2)) {
 				enqueue(result, neighbour);
-				//printf_array(&array_rep);
+				insert_bst(&visited, neighbour);
+				//printf_array(helper_array1);
 			}
 
 			helper_array1->array[i] += 1;
@@ -98,7 +96,8 @@ void get_new_neighbours(size_t block, Labyrinth *labyrinth, NumFIFO *result, BST
 
 			if(!contains_bst(visited, neighbour) && !is_wall(neighbour, labyrinth, helper_array2)) {
 				enqueue(result, neighbour);
-				//printf_array(&array_rep);
+				insert_bst(&visited, neighbour);
+				//printf_array(helper_array1);
 			}
 			helper_array1->array[i] -= 1;
 		}
@@ -171,9 +170,6 @@ size_t get_result(Labyrinth *labyrinth) {
 			continue;
 		}
 
-		if (contains_bst(visited, block)) {
-			continue;
-		}
 
 		if(block == labyrinth->finish) {
 			found = true;
@@ -183,6 +179,13 @@ size_t get_result(Labyrinth *labyrinth) {
 		insert_bst(&visited, block);
 		get_new_neighbours(block, labyrinth, non_active_queue, visited, &helper_array1, &helper_array2);
 	}
+	printf("%zu\n", queue_0.array.size);
+	printf("%zu\n", queue_1.array.size);
+	if (contains_bst(visited, 383970))
+		printf("Zaweira 383970");
+	//print_tree(visited);
+	//printf("%zu\n", visited);
+
 
 	free_queue(&queue_0);
 	free_queue(&queue_1);

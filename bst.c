@@ -51,3 +51,12 @@ bool contains_bst(BST *root, const size_t value) {
 	return false;
 
 }
+
+void print_tree(BST *root) {
+	printf("%zu\n", root->value);
+	if (root->left != NULL)
+		print_tree(root->left);
+	if (root->right != NULL)
+		print_tree(root->right);
+	
+}

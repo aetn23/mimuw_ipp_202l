@@ -16,4 +16,6 @@ void insert_bst(BST **root, const size_t value);
 BST *create_node (const size_t value);
 
 bool contains_bst(BST *root, const size_t value);
+
+void print_tree(BST *root);
 #endif //_BST_
