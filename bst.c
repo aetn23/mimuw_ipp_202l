@@ -21,15 +21,17 @@ void insert_bst(BST **root, const size_t value) {
 
 		if (value > root_cp->value)
 			root_cp = root_cp->right;
-		else
+		else if (value < root_cp->value)
 			root_cp = root_cp->left;
+		else
+			return;
 	}
 
 	if (root_cp_trail == NULL)
 		*root = create_node(value);
 	else if (value > root_cp_trail->value)
 		root_cp_trail->right = create_node(value);
-	else
+	else if (value < root_cp_trail->value)
 		root_cp_trail->left = create_node(value);
 }
 
