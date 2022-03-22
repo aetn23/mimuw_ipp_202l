@@ -8,11 +8,7 @@ int main() {
 	Labyrinth labyrinth;
 	bool good_indput = parse(&labyrinth);
 
-	labyrinth.partial_array.array = malloc_wrapper(labyrinth.dimensions.size * sizeof(size_t));
-	labyrinth.partial_array.size = labyrinth.dimensions.size;
-	labyrinth.partial_array.allocated_size = labyrinth.dimensions.size;
-
-	calculate_partial_sums(&labyrinth.dimensions, &labyrinth.partial_array);
+	printf("%s\n", labyrinth.walls_hexal_version.content);
 
 	if(good_indput)
 		printf("%zu\n" ,get_result(&labyrinth));

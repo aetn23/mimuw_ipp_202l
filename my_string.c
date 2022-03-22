@@ -61,14 +61,28 @@ size_t str_to_size_t(const String *str) {
 	return strtoull(str->content, &str_end, 10);
 }
 
+void string_rev(String *str) {
+	char tmp;
+	size_t i = str->size - 1;
+	size_t j = 0;
+
+	while (i > j) {
+		tmp = str->content[i];
+		str->content[i] = str->content[j];
+		str->content[j] = tmp;
+		i--;
+		j++;
+	}
+}
 
 String hexal_to_binary(const String *hexal) {
 	String result;
 	init_string(&result);
 	size_t i = 0;
-	//printf("%s\n", hexal->content);
+	printf("%s\n", hexal->content);
 	for (; i < hexal->size; i++) {
 		char character = hexal->content[i];
+		//printf("%c\n", character);
 		switch (tolower(character)) {
 			case '0':
 				concat_str(&result, "0000");
@@ -122,6 +136,11 @@ String hexal_to_binary(const String *hexal) {
 				break;
 		}
 	}
+	//0001 1100 0010 0100
+	//printf("%s\n", result.content);
+	string_rev(&result);
+	//printf("%s\n", result.content);
 	insert_str(&result, '\0', result.size);
+	printf("result %s\n", result.content);
 	return result;
 }

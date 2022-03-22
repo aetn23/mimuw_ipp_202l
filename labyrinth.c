@@ -5,11 +5,12 @@
 #include "queue.h"
 
 //todo fix init_container functions MOSTEST IMPORTANT DONE
-//todo change hashing to the one in the task descrpiton MOST IMPORTANT
+//todo change hashing to the one in the task descrpiton MOST IMPORTANT DONE
 //todo implement rev_partial_product to faster compute vars LEAST IMPORTANT DEPENDS ON POINT UP; MAY NOT BE REQUIRED
 //todo get rid of bst and hold visited in array LESS IMPORTANT; IF TESTS TURN OUT OK MAY NOT BE NEEDED
 //todo implement the R fourth line version IMPORTANT
 //todo implement shrinking of queue after constant has been reached LEASTEST IMPORTANT
+//todo find out about the last line shenenigans, particulary in reading the hex line
 
 void init_labyrinth(Labyrinth *labyrinth, size_t alloc_size) {
 	init_numbers_array(&labyrinth->dimensions, alloc_size);
@@ -26,31 +27,38 @@ size_t array_rep_to_number_rep(const NumbersArray *array, const Labyrinth *labyr
 	bool overflow = false;
 
 	for (size_t i = 0; i < array->size; i++)
-		result += (array->array[i] - 1) *
-		          (array_product(&labyrinth->dimensions, &overflow,
-		                         i + 1,
-		                         labyrinth->dimensions.size));
-
+		result += (array->array[i] - 1) * labyrinth->partial_array.array[i];
+	/*
+	printf("ARRAY: ");
+	printf_array(array);
+	printf("%zu\n", result);
+*/
 	return result;
 }
 
 size_t get_alfa(const Labyrinth *labyrinth, size_t previous_alfa, size_t n) {
-	bool overflow = false;
-	return previous_alfa % array_product(&labyrinth->dimensions,
-	                                     &overflow, n,
-	                                     labyrinth->dimensions.size);
+	return previous_alfa % labyrinth->partial_array.array[n];
 }
 
 void number_rep_to_array_rep(const size_t number, const Labyrinth *labyrinth,
                              NumbersArray *result) {
 	size_t previous_alfa = number;
-	bool overflow = false;
-	for (size_t i = 0; i < result->size; i++) {
-		result->array[i] = get_alfa(labyrinth, previous_alfa, i) /
-		                   array_product(&labyrinth->dimensions, &overflow, i + 1, labyrinth->dimensions.size) + 1;
-	}
-}
+	for (size_t i = result->size - 1;; i--) {
+		result->array[i] = (previous_alfa / labyrinth->partial_array.array[i]) + 1;
+		previous_alfa = get_alfa(labyrinth, previous_alfa, i);
 
+		if (i == 0)
+			break;
+	}
+	/*
+	printf("NUMBER: ");
+	printf("%zu\n", number);
+	printf("ARRAY: ");
+	printf_array(result);
+	printf("\n");
+	 */
+
+}
 
 //todo think if emplace calculation is better and think of speeding up array_prodcut by
 //calculating it in array
@@ -58,37 +66,28 @@ bool is_wall(size_t block, Labyrinth *labyrinth, NumbersArray *helper_array) {
 
 
 	if (labyrinth->is_hexal_version) {
-		number_rep_to_array_rep(block, labyrinth, helper_array);
-		//printf_array(helper_array);
-		bool overflow = false;
-		size_t position = 0;
-
-		for (size_t i = 0; i < helper_array->size; i++) {
-			position += (helper_array->array[i] - 1) * labyrinth->partial_array.array[i];
+		if (labyrinth->walls_hexal_version.size >= block) {
+			printf("WALL: %zu\n", block);
+			return labyrinth->walls_hexal_version.content[block] == '1';
 		}
-		if (position >= labyrinth->walls_hexal_version.size)
-			return false;
-
-		return labyrinth->walls_hexal_version.content[position] == '1';
 	}
 	return false;
 }
 
-
-
-void get_new_neighbours(size_t block, Labyrinth *labyrinth, NumFIFO *result, BST *visited, NumbersArray *helper_array1, NumbersArray *helper_array2) {
+void get_new_neighbours(size_t block, Labyrinth *labyrinth, NumFIFO *result, BST *visited, NumbersArray *helper_array1,
+                        NumbersArray *helper_array2) {
 	size_t i = 0;
 	size_t neighbour;
 
 	//printf("Block : ");
 	number_rep_to_array_rep(block, labyrinth, helper_array1);
-	//printf_array(&array_rep);
+	//printf_array(helper_array1);
 	for (; i < helper_array1->size; i++) {
 		if (helper_array1->array[i] - 1 > 0) {
 			helper_array1->array[i] = helper_array1->array[i] - 1;
 
 			neighbour = array_rep_to_number_rep(helper_array1, labyrinth);
-			if(!contains_bst(visited, neighbour) && !is_wall(neighbour, labyrinth, helper_array2)) {
+			if (!contains_bst(visited, neighbour) && !is_wall(neighbour, labyrinth, helper_array2)) {
 				enqueue(result, neighbour);
 				insert_bst(&visited, neighbour);
 				//printf_array(helper_array1);
@@ -100,7 +99,7 @@ void get_new_neighbours(size_t block, Labyrinth *labyrinth, NumFIFO *result, BST
 			helper_array1->array[i] = helper_array1->array[i] + 1;
 			neighbour = array_rep_to_number_rep(helper_array1, labyrinth);
 
-			if(!contains_bst(visited, neighbour) && !is_wall(neighbour, labyrinth, helper_array2)) {
+			if (!contains_bst(visited, neighbour) && !is_wall(neighbour, labyrinth, helper_array2)) {
 				enqueue(result, neighbour);
 				insert_bst(&visited, neighbour);
 				//printf_array(helper_array1);
@@ -167,7 +166,7 @@ size_t get_result(Labyrinth *labyrinth) {
 		}
 
 
-		if(block == labyrinth->finish) {
+		if (block == labyrinth->finish) {
 			found = true;
 			break;
 		}

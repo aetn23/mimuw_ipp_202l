@@ -115,35 +115,22 @@ bool parse_first_3_lines(Labyrinth *labyrinth, Line *line, size_t line_number) {
 
 		labyrinth->dimensions = numbers;
 
-		//labyrinth->dimensions = realloc_wrapper(labyrinth->dimensions,
-		//																				sizeof(size_t) * labyrinth->dimensions_size);
+		init_numbers_array(&labyrinth->partial_array, labyrinth->dimensions.size + 1);
+		labyrinth->partial_array.size = labyrinth->dimensions.size + 1;
+		calculate_partial_sums(&labyrinth->dimensions, &labyrinth->partial_array);
 	} else if (numbers.size != labyrinth->dimensions.size) {
 		free_numbers_array(&numbers);
 		handle_wrong_input(line_number);
 
 		return false;
 	} else if (line_number == 2) {
-		fix_order(&numbers, labyrinth);
-		/*
-		size_t arra_rep_to_num = array_rep_to_number_rep(&numbers, labyrinth);
-		printf("%zu\n", arra_rep_to_num);
-		NumbersArray test;
-		init_numbers_array(&test);
-		test.array = malloc_wrapper(labyrinth->dimensions.size * 2 * sizeof(size_t));
-		test.allocated_size = 2 * labyrinth->dimensions.size;
-		test.size = 0;
-		//number_rep_to_array_rep(arra_rep_to_num, labyrinth, &test);
-		get_neighbours(arra_rep_to_num, labyrinth, &test);
-		//printf("%zu\n", test.size);
-		printf_array(&test);
-		free_numbers_array(&test);
-		 */
+		//fix_order(&numbers, labyrinth);
 
 		labyrinth->start = array_rep_to_number_rep(&numbers, labyrinth);
 		free_numbers_array(&numbers);
 
 	} else if (line_number == 3) {
-		fix_order(&numbers, labyrinth);
+		//fix_order(&numbers, labyrinth);
 
 		labyrinth->finish = array_rep_to_number_rep(&numbers, labyrinth);
 		free_numbers_array(&numbers);
@@ -195,11 +182,13 @@ bool parse_fourth_line_helper(String *result_hexal_variant,
 
 		++i;
 		//Skip the last character, which is blank
-		for (; i < line->size - 1; i++) {
+		for (; i < line->size; i++) {
 			character = line->content[i];
 			if (isxdigit(character)) {
 				insert_str(result_hexal_variant, character, result_hexal_variant->size);
 				continue;
+			} else if (isspace(character)) {
+				break;
 			}
 
 			handle_wrong_input(line_number);
@@ -215,6 +204,7 @@ bool parse_fourth_line_helper(String *result_hexal_variant,
 }
 
 bool parse_fourth_line(Labyrinth *labyrinth, Line *line, size_t line_number) {
+
 	String result_hexal_variant;
 	init_string(&result_hexal_variant);
 	NumbersArray result_R_variant;

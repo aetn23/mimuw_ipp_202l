@@ -31,4 +31,6 @@ String hexal_to_binary(const String *str);
 
 size_t str_to_size_t(const String *str);
 
+void concat_str(String *str, char *to_concat);
+
 #endif //_MY_STRING_
