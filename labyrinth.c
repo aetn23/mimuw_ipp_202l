@@ -70,45 +70,40 @@ bool is_wall(size_t block, Labyrinth *labyrinth, NumbersArray *helper_array) {
 
 
 
-void get_new_neighbours(size_t block, Labyrinth *labyrinth, NumFIFO *result, BST *visited, NumbersArray *helper_array) {
+void get_new_neighbours(size_t block, Labyrinth *labyrinth, NumFIFO *result, BST *visited, NumbersArray *helper_array1, NumbersArray *helper_array2) {
 	size_t i = 0;
 	size_t neighbour;
 
 
-	NumbersArray array_rep;
-	init_numbers_array(&array_rep);
-	array_rep.array = malloc_wrapper(sizeof(size_t) * labyrinth->dimensions.size);
-	array_rep.size = labyrinth->dimensions.size;
-	array_rep.allocated_size = labyrinth->dimensions.size;
+
 
 	//printf("Block : ");
-	number_rep_to_array_rep(block, labyrinth, &array_rep);
+	number_rep_to_array_rep(block, labyrinth, helper_array1);
 	//printf_array(&array_rep);
-	for (; i < array_rep.size; i++) {
-		if (array_rep.array[i] - 1 > 0) {
-			array_rep.array[i] = array_rep.array[i] - 1;
+	for (; i < helper_array1->size; i++) {
+		if (helper_array1->array[i] - 1 > 0) {
+			helper_array1->array[i] = helper_array1->array[i] - 1;
 
-			neighbour = array_rep_to_number_rep(&array_rep, labyrinth);
-			if(!contains_bst(visited, neighbour) && !is_wall(neighbour, labyrinth, helper_array)) {
+			neighbour = array_rep_to_number_rep(helper_array1, labyrinth);
+			if(!contains_bst(visited, neighbour) && !is_wall(neighbour, labyrinth, helper_array2)) {
 				enqueue(result, neighbour);
 				//printf_array(&array_rep);
 			}
 
-			array_rep.array[i] = array_rep.array[i] + 1;
+			helper_array1->array[i] += 1;
 		}
-		if (array_rep.array[i] + 1 <= labyrinth->dimensions.array[i]) {
-			array_rep.array[i] = array_rep.array[i] + 1;
-			neighbour = array_rep_to_number_rep(&array_rep, labyrinth);
+		if (helper_array1->array[i] + 1 <= labyrinth->dimensions.array[i]) {
+			helper_array1->array[i] = helper_array1->array[i] + 1;
+			neighbour = array_rep_to_number_rep(helper_array1, labyrinth);
 
-			if(!contains_bst(visited, neighbour) && !is_wall(neighbour, labyrinth, helper_array)) {
+			if(!contains_bst(visited, neighbour) && !is_wall(neighbour, labyrinth, helper_array2)) {
 				enqueue(result, neighbour);
 				//printf_array(&array_rep);
 			}
-			array_rep.array[i] = array_rep.array[i] - 1;
+			helper_array1->array[i] -= 1;
 		}
 	}
 	//printf("\n\n");
-	free_numbers_array(&array_rep);
 }
 
 
@@ -139,11 +134,17 @@ size_t get_result(Labyrinth *labyrinth) {
 	bool queue_0_active = true;
 	bool queue_end = false;
 
-	NumbersArray helper_array;
-	init_numbers_array(&helper_array);
-	helper_array.array = malloc_wrapper(sizeof(size_t) * labyrinth->dimensions.size);
-	helper_array.allocated_size = labyrinth->dimensions.size;
-	helper_array.size = labyrinth->dimensions.size;
+	NumbersArray helper_array1;
+	init_numbers_array(&helper_array1);
+	helper_array1.array = malloc_wrapper(sizeof(size_t) * labyrinth->dimensions.size);
+	helper_array1.allocated_size = labyrinth->dimensions.size;
+	helper_array1.size = labyrinth->dimensions.size;
+
+	NumbersArray helper_array2;
+	init_numbers_array(&helper_array2);
+	helper_array2.array = malloc_wrapper(sizeof(size_t) * labyrinth->dimensions.size);
+	helper_array2.allocated_size = labyrinth->dimensions.size;
+	helper_array2.size = labyrinth->dimensions.size;
 
 	BST *visited;
 	visited = NULL;
@@ -158,7 +159,7 @@ size_t get_result(Labyrinth *labyrinth) {
 
 
 	insert_bst(&visited, block);
-	get_new_neighbours(block, labyrinth, active_queue, visited, &helper_array);
+	get_new_neighbours(block, labyrinth, active_queue, visited, &helper_array1, &helper_array2);
 	while (!(is_empty_queue(&queue_0) && is_empty_queue(&queue_1))) {
 		//printf("len: %zu\n ", length);
 		block = dequeue(active_queue, &queue_end);
@@ -180,12 +181,13 @@ size_t get_result(Labyrinth *labyrinth) {
 		}
 
 		insert_bst(&visited, block);
-		get_new_neighbours(block, labyrinth, non_active_queue, visited, &helper_array);
+		get_new_neighbours(block, labyrinth, non_active_queue, visited, &helper_array1, &helper_array2);
 	}
 
 	free_queue(&queue_0);
 	free_queue(&queue_1);
-	free_numbers_array(&helper_array);
+	free_numbers_array(&helper_array1);
+	free_numbers_array(&helper_array2);
 	free_tree(visited);
 	free_numbers_array(&debug);
 	if (found)
