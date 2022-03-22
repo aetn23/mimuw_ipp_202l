@@ -4,6 +4,14 @@
 #include "memory_managment.h"
 #include "queue.h"
 
+//todo fix init_container functions MOSTEST IMPORTANT
+//todo change hashin to the one in the task descrpiton MOST IMPORTANT
+//todo implement rev_partial_product to faster compute vars LEAST IMPORTANT
+//todo get rid of bst and hold visited in array LESS IMPORTANT
+//todo implement the R fourth line version IMPORTANT
+
+
+
 
 void init_labyrinth(Labyrinth *labyrinth) {
 	init_numbers_array(&labyrinth->dimensions);
@@ -176,7 +184,7 @@ size_t get_result(Labyrinth *labyrinth) {
 			break;
 		}
 
-		insert_bst(&visited, block);
+		//insert_bst(&visited, block);
 		get_new_neighbours(block, labyrinth, non_active_queue, visited, &helper_array1, &helper_array2);
 	}
 	printf("%zu\n", queue_0.array.size);
