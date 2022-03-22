@@ -4,14 +4,12 @@
 #include "memory_managment.h"
 #include "queue.h"
 
-//todo fix init_container functions MOSTEST IMPORTANT
-//todo change hashin to the one in the task descrpiton MOST IMPORTANT
-//todo implement rev_partial_product to faster compute vars LEAST IMPORTANT
-//todo get rid of bst and hold visited in array LESS IMPORTANT
+//todo fix init_container functions MOSTEST IMPORTANT DONE
+//todo change hashing to the one in the task descrpiton MOST IMPORTANT
+//todo implement rev_partial_product to faster compute vars LEAST IMPORTANT DEPENDS ON POINT UP; MAY NOT BE REQUIRED
+//todo get rid of bst and hold visited in array LESS IMPORTANT; IF TESTS TURN OUT OK MAY NOT BE NEEDED
 //todo implement the R fourth line version IMPORTANT
-
-
-
+//todo implement shrinking of queue after constant has been reached LEASTEST IMPORTANT
 
 void init_labyrinth(Labyrinth *labyrinth, size_t alloc_size) {
 	init_numbers_array(&labyrinth->dimensions, alloc_size);
