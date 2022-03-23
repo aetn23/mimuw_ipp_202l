@@ -17,26 +17,20 @@
 Line read_line() {
 	Line line;
 	init_line(&line);
+	ssize_t length;
+	length = getline(&line.content, &line.allocated_size, stdin);
 
-	ssize_t length = getline(&line.content, &line.size, stdin);
-
-	if (length == -1)
+	if (length == -1) {
 		line.state = false;
-	else
+	}
+	else {
 		line.size = length;
-
+		line.state = true;
+	}
+	//printf("%zu\n", line.size);
 	check_alloc(line.content);
 
 	return line;
-}
-
-//for some godless reasons in this task coordinates to start block are given
-//incorrectly ie counting from right down, which is different from the rest of
-//the task.
-void fix_order(NumbersArray *array, Labyrinth *labyrinth) {
-	for (size_t i = 0; i < array->size; i++) {
-		array->array[i] = labyrinth->dimensions.array[i] - array->array[i] + 1;
-	}
 }
 
 bool parse_first_3_lines_helper(NumbersArray *numbers, Line *line,
@@ -181,7 +175,6 @@ bool parse_fourth_line_helper(String *result_hexal_variant,
 		}
 
 		++i;
-		//Skip the last character, which is blank
 		for (; i < line->size; i++) {
 			character = line->content[i];
 			if (isxdigit(character)) {
@@ -241,15 +234,16 @@ bool parse_fourth_line(Labyrinth *labyrinth, Line *line, size_t line_number) {
 bool parse(Labyrinth *labyrinth) {
 	init_labyrinth(labyrinth, 0);
 	Line line;
-	init_line(&line);
 	size_t lines_count = 1;
 	bool success = true;
 
 	while (true) {
-		//debug
+		//debug, needed for clion debuggin which does not go well with endline
 		if (lines_count == 5)
 			return true;
 		line = read_line();
+		//printf("%s\n", line.content);
+		//printf("%zu\n", line.size);
 
 		if (!line.state && lines_count == MAX_NUM_LINES + 1) {
 			break;
@@ -258,11 +252,15 @@ bool parse(Labyrinth *labyrinth) {
 			success = false;
 			break;
 		}
-
-		//parse_first_3_lines function works on assumption that line ends with char
-		//that returns true on isspace() call. This assumption allows that function
-		//to be more readable.
-		insert(line.content, '\t', line.size - 1);
+		
+		//The fourth line may not end with \n, but the parsing of that line
+		//will be shorter and nicer if they could assume that \n always will be 
+		//present. Hence this insertion.
+		if (lines_count == 4 && !isspace(line.content[line.size - 1])) {
+			insert_line(&line, '\n', line.size); 
+			insert_line(&line, '\0', line.size);
+		}
+		
 
 		if (lines_count <= 3) {
 			if (!parse_first_3_lines(labyrinth, &line, lines_count)) {

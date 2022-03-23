@@ -16,12 +16,23 @@ void init_string(String *str) {
 void init_line(Line *line) {
 	line->content = NULL;
 	line->size = 0;
+	line->allocated_size = 0;
 	line->state = true;
 }
 
 //todo think if this function should exist
 void insert(char *str, char to_insert, const size_t location) {
 	str[location] = to_insert;
+}
+
+void insert_line (Line *line, char to_insert, size_t location) {
+	while (line->allocated_size <= location) {
+		line->content = realloc_wrapper(line->content, line->allocated_size * REALLOC_MULTIPLIER);
+		check_alloc(line->content);
+		line->allocated_size *= REALLOC_MULTIPLIER;
+	}
+	line->content[location] = to_insert;
+	line->size++;
 }
 
 //There is no guarantee that string wil be null terminated after this operation

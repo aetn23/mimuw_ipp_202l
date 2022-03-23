@@ -8,7 +8,7 @@ int main() {
 	Labyrinth labyrinth;
 	bool good_indput = parse(&labyrinth);
 
-	printf("%s\n", labyrinth.walls_hexal_version.content);
+	//printf("%s\n", labyrinth.walls_hexal_version.content);
 
 	if(good_indput)
 		printf("%zu\n" ,get_result(&labyrinth));
