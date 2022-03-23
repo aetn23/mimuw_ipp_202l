@@ -225,6 +225,9 @@ bool parse_fourth_line(Labyrinth *labyrinth, Line *line, size_t line_number) {
 		insert_str(&result_hexal_variant, '\0', result_hexal_variant.size);
 		labyrinth->is_hexal_version = true;
 		labyrinth->walls_hexal_version = hexal_to_binary(&result_hexal_variant);
+		labyrinth->walls_hexal_version.content = realloc_wrapper(&labyrinth->walls_hexal_version.content, labyrinth->block_count);
+		labyrinth->walls_hexal_version.size = labyrinth->block_count;
+		labyrinth->walls_hexal_version.allocated_size = labyrinth->block_count;
 
 		if (labyrinth->walls_hexal_version.size - 1 > labyrinth->block_count) { 
 			handle_wrong_input(line_number);
@@ -242,6 +245,8 @@ bool parse_fourth_line(Labyrinth *labyrinth, Line *line, size_t line_number) {
 	return true;
 }
 
+//todo find out about this behaviour
+//fifth line should be nonexistent
 bool parse(Labyrinth *labyrinth) {
 	init_labyrinth(labyrinth, 0);
 	Line line;
@@ -250,13 +255,13 @@ bool parse(Labyrinth *labyrinth) {
 
 	while (true) {
 		//debug, needed for clion debuggin which does not go well with endline
-		if (lines_count == 5)
-			return true;
+		//if (lines_count == 5)
+		//	return true;
 		line = read_line();
 		//printf("%s\n", line.content);
 		//printf("%zu\n", line.size);
 
-		if (!line.state && lines_count == MAX_NUM_LINES + 1) {
+		if (!line.state && lines_count == MAX_NUM_LINES + 1 && line.size == 0) {
 			break;
 		} else if ((lines_count > MAX_NUM_LINES) || (!line.state && lines_count <= MAX_NUM_LINES)) {
 			handle_wrong_input(lines_count);

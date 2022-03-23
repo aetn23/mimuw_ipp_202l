@@ -86,6 +86,7 @@ void string_rev(String *str) {
 	}
 }
 
+//todo write an algo to do it instead of switch
 String hexal_to_binary(const String *hexal) {
 	String result;
 	init_string(&result);
@@ -147,7 +148,6 @@ String hexal_to_binary(const String *hexal) {
 				break;
 		}
 	}
-	//0001 1100 0010 0100
 	//printf("%s\n", result.content);
 	string_rev(&result);
 	//printf("%s\n", result.content);
