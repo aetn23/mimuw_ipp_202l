@@ -10,7 +10,7 @@
 //todo get rid of bst and hold visited in array LESS IMPORTANT; IF TESTS TURN OUT OK MAY NOT BE NEEDED
 //todo implement the R fourth line version IMPORTANT
 //todo implement shrinking of queue after constant has been reached LEASTEST IMPORTANT
-//todo find out about the last line shenenigans, particulary in reading the hex line
+//todo find out about the last line shenenigans, particulary in reading the hex line DONE
 
 void init_labyrinth(Labyrinth *labyrinth, size_t alloc_size) {
 	init_numbers_array(&labyrinth->dimensions, alloc_size);
@@ -67,7 +67,7 @@ bool is_wall(size_t block, Labyrinth *labyrinth, NumbersArray *helper_array) {
 
 	if (labyrinth->is_hexal_version) {
 		if (labyrinth->walls_hexal_version.size >= block) {
-			printf("WALL: %zu\n", block);
+			//printf("WALL: %zu\n", block);
 			return labyrinth->walls_hexal_version.content[block] == '1';
 		}
 	}

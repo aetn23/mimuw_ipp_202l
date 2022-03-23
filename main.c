@@ -17,15 +17,5 @@ int main() {
 
 
 
-	BST *tree = NULL;
-	insert_bst(&tree, 4);
-	insert_bst(&tree, 5);
-	insert_bst(&tree, 6);
-	insert_bst(&tree, 7);
-	insert_bst(&tree, 1);
-	insert_bst(&tree, 123);
-	contains_bst(tree, 123);
-	free_tree(tree);
-
 	return 0;
 }

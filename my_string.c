@@ -90,7 +90,7 @@ String hexal_to_binary(const String *hexal) {
 	String result;
 	init_string(&result);
 	size_t i = 0;
-	printf("%s\n", hexal->content);
+	//printf("%s\n", hexal->content);
 	for (; i < hexal->size; i++) {
 		char character = hexal->content[i];
 		//printf("%c\n", character);
@@ -152,6 +152,6 @@ String hexal_to_binary(const String *hexal) {
 	string_rev(&result);
 	//printf("%s\n", result.content);
 	insert_str(&result, '\0', result.size);
-	printf("result %s\n", result.content);
+	//printf("result %s\n", result.content);
 	return result;
 }

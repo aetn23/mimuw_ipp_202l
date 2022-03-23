@@ -223,6 +223,14 @@ bool parse_fourth_line(Labyrinth *labyrinth, Line *line, size_t line_number) {
 		labyrinth->is_hexal_version = true;
 		labyrinth->walls_hexal_version = hexal_to_binary(&result_hexal_variant);
 
+		if (labyrinth->walls_hexal_version.size > labyrinth->block_count) { 
+			handle_wrong_input(line_number);
+			free_numbers_array(&result_R_variant);
+			free_string(&result_hexal_variant);
+
+			return false;
+		}
+
 		free_numbers_array(&result_R_variant);
 	}
 
