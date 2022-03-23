@@ -159,7 +159,7 @@ bool parse_fourth_line_helper(Labyrinth *labyrinth, String *result_hexal_variant
 	}
 
 	if (character == 'R') {
-		line->content[i] = '\t';
+		//line->content[i] = '\t';
 		result_R_variant->array = malloc_wrapper(sizeof(size_t) * START_ARRAY_SIZE);
 
 		if (parse_first_3_lines_helper(labyrinth, result_R_variant, line, line_number)) {
