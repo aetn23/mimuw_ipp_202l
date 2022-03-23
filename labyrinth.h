@@ -30,7 +30,7 @@ void number_rep_to_array_rep (size_t number, const Labyrinth *labyrinth,
 
 void get_neighbours(size_t block, const Labyrinth *labyrinth, NumFIFO *result);
 
-bool is_wall(size_t block, Labyrinth *labyrinth, NumbersArray *helper_array);
+bool is_wall(size_t block, Labyrinth *labyrinth);
 
 size_t get_result (Labyrinth *labyrinth);
 

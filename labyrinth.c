@@ -24,7 +24,6 @@ void init_labyrinth(Labyrinth *labyrinth, size_t alloc_size) {
 //todo describe what is happening
 size_t array_rep_to_number_rep(const NumbersArray *array, const Labyrinth *labyrinth) {
 	size_t result = 0;
-	bool overflow = false;
 
 	for (size_t i = 0; i < array->size; i++)
 		result += (array->array[i] - 1) * labyrinth->partial_array.array[i];
@@ -62,7 +61,7 @@ void number_rep_to_array_rep(const size_t number, const Labyrinth *labyrinth,
 
 //todo think if emplace calculation is better and think of speeding up array_prodcut by
 //calculating it in array
-bool is_wall(size_t block, Labyrinth *labyrinth, NumbersArray *helper_array) {
+bool is_wall(size_t block, Labyrinth *labyrinth) {
 
 
 	if (labyrinth->is_hexal_version) {
@@ -74,8 +73,7 @@ bool is_wall(size_t block, Labyrinth *labyrinth, NumbersArray *helper_array) {
 	return false;
 }
 
-void get_new_neighbours(size_t block, Labyrinth *labyrinth, NumFIFO *result, BST *visited, NumbersArray *helper_array1,
-                        NumbersArray *helper_array2) {
+void get_new_neighbours(size_t block, Labyrinth *labyrinth, NumFIFO *result, BST *visited, NumbersArray *helper_array1) {
 	size_t i = 0;
 	size_t neighbour;
 
@@ -87,7 +85,7 @@ void get_new_neighbours(size_t block, Labyrinth *labyrinth, NumFIFO *result, BST
 			helper_array1->array[i] = helper_array1->array[i] - 1;
 
 			neighbour = array_rep_to_number_rep(helper_array1, labyrinth);
-			if (!contains_bst(visited, neighbour) && !is_wall(neighbour, labyrinth, helper_array2)) {
+			if (!contains_bst(visited, neighbour) && !is_wall(neighbour, labyrinth)) {
 				enqueue(result, neighbour);
 				insert_bst(&visited, neighbour);
 				//printf_array(helper_array1);
@@ -99,7 +97,7 @@ void get_new_neighbours(size_t block, Labyrinth *labyrinth, NumFIFO *result, BST
 			helper_array1->array[i] = helper_array1->array[i] + 1;
 			neighbour = array_rep_to_number_rep(helper_array1, labyrinth);
 
-			if (!contains_bst(visited, neighbour) && !is_wall(neighbour, labyrinth, helper_array2)) {
+			if (!contains_bst(visited, neighbour) && !is_wall(neighbour, labyrinth)) {
 				enqueue(result, neighbour);
 				insert_bst(&visited, neighbour);
 				//printf_array(helper_array1);
@@ -153,7 +151,7 @@ size_t get_result(Labyrinth *labyrinth) {
 
 
 	insert_bst(&visited, block);
-	get_new_neighbours(block, labyrinth, active_queue, visited, &helper_array1, &helper_array2);
+	get_new_neighbours(block, labyrinth, active_queue, visited, &helper_array1);
 	while (!(is_empty_queue(&queue_0) && is_empty_queue(&queue_1))) {
 		//printf("len: %zu\n ", length);
 		block = dequeue(active_queue, &queue_end);
@@ -172,7 +170,7 @@ size_t get_result(Labyrinth *labyrinth) {
 		}
 
 		//insert_bst(&visited, block);
-		get_new_neighbours(block, labyrinth, non_active_queue, visited, &helper_array1, &helper_array2);
+		get_new_neighbours(block, labyrinth, non_active_queue, visited, &helper_array1);
 	}
 	/*
 	printf("%zu\n", queue_0.array.size);
