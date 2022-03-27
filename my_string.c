@@ -1,9 +1,7 @@
 #include <string.h>
-#include <ctype.h>
 
 #include "my_string.h"
 #include "memory_managment.h"
-
 
 #define HEXAl_AS_BIN_SIZE 4
 
@@ -88,10 +86,12 @@ void hexal_to_reverse_binary(String *str, BoolArray *result) {
 		long number = strtol(&character, NULL, 16);
 
 		for (size_t j = 0; j < HEXAl_AS_BIN_SIZE; j++) {
+			//printf("%d", (bool)(number % 2));
 			push_back_bool(result, (bool)(number % 2));
 			number /= 2;
 		}
 		if (i == 0)
 			break;
 	}
+	//printf("\n");
 }

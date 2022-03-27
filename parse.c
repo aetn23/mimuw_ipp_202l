@@ -15,7 +15,6 @@
 #include "memory_managment.h"
 #include "error_handling.h"
 
-
 #define TWO_TO_THRITYTWO 4294967296UL
 #define MIN_NUMBER_FIRST_3_LINES 1
 #define MIN_NUMBER_FOURTH_LINE 0
@@ -64,6 +63,8 @@ void get_walls_r_version(Labyrinth *labyrinth, NumbersArray *R_line, BoolArray *
 	free_numbers_array(&w_numbers);
 }
 
+//todo add check if star coordinates lesser than dimensions
+
 bool parse_first_3_lines_helper(Labyrinth *labyrinth, NumbersArray *numbers, Line *line,
                                 size_t line_number, size_t min_number_allowed) {
 	bool is_previous_blank = true;
@@ -103,7 +104,6 @@ bool parse_first_3_lines_helper(Labyrinth *labyrinth, NumbersArray *numbers, Lin
 
 					return false;
 				}
-
 
 				clear_str(&number_as_string);
 
@@ -245,15 +245,11 @@ bool parse_fourth_line(Labyrinth *labyrinth, Line *line, size_t line_number) {
 	}
 
 	labyrinth->walls.array = calloc_wraper(labyrinth->block_count, sizeof(bool));
-	labyrinth->walls.size = labyrinth->block_count;
 	labyrinth->walls.allocated_size = labyrinth->block_count;
 
 	if (result_hexal_variant.size == 0) {
 		labyrinth->is_hexal_version = false;
-
 		get_walls_r_version(labyrinth, &result_R_variant, &labyrinth->walls);
-
-
 	} else {
 		insert_str(&result_hexal_variant, '\0', result_hexal_variant.size);
 		//In C strings are counted up to null byte.
@@ -283,12 +279,7 @@ bool parse(Labyrinth *labyrinth) {
 	bool success = true;
 
 	while (true) {
-		//debug, needed for clion debuggin which does not go well with endline
-		//if (lines_count == 5)
-		//	return true;
 		line = read_line();
-		//printf("%s\n", line.content);
-		//printf("%zu\n", line.size);
 
 		if (!line.state && lines_count == MAX_NUM_LINES + 1 && line.size == 0) {
 			break;

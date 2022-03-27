@@ -99,9 +99,6 @@ void get_new_neighbours(size_t block, Labyrinth *labyrinth, NumFIFO *result, Num
 
 //todo if edge case
 size_t get_result(Labyrinth *labyrinth) {
-
-
-
 	size_t length = 1;
 	bool found = false;
 
@@ -114,9 +111,6 @@ size_t get_result(Labyrinth *labyrinth) {
 	NumFIFO *active_queue = &queue_0;
 	NumFIFO *non_active_queue = &queue_1;
 
-	//printf("wpisuje: %zu, %zu, %zu\n", active_queue->array.allocated_size, active_queue->array.size, active_queue->first_pos);
-	//printf("wpisuje: %zu, %zu, %zu\n", non_active_queue->array.allocated_size, non_active_queue->array.size, non_active_queue->first_pos);
-
 
 	bool queue_0_active = true;
 	bool queue_end = false;
@@ -128,9 +122,6 @@ size_t get_result(Labyrinth *labyrinth) {
 	NumbersArray helper_array2;
 	init_numbers_array(&helper_array2, labyrinth->dimensions.size);
 	helper_array2.size = labyrinth->dimensions.size;
-
-	//BST *visited;
-	//visited = NULL;
 
 	size_t block = labyrinth->start;
 

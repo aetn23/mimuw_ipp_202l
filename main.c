@@ -9,12 +9,13 @@ int main() {
 	Labyrinth labyrinth;
 	init_labyrinth(&labyrinth, START_ARRAY_SIZE);
 	bool good_indput = parse(&labyrinth);
+/*
+	for(size_t i = 0; i < 20; i++)
+		printf("%zu: %d\n", i, is_wall(i, &labyrinth));*/
 
 	//printf("%s\n", labyrinth.walls_hexal_version.content);
 	if (good_indput) {
-		if (is_wall(labyrinth.start, &labyrinth))
-			handle_wrong_input(4);
-		else if (is_wall(labyrinth.finish, &labyrinth))
+		if (is_wall(labyrinth.finish, &labyrinth) || is_wall(labyrinth.start, &labyrinth))
 			handle_wrong_input(4);
 		else if (labyrinth.start == labyrinth.finish) {
 			printf("0\n");
@@ -28,7 +29,6 @@ int main() {
 		}
 	}
 	free_labyrinth(&labyrinth);
-
 
 	return 0;
 }

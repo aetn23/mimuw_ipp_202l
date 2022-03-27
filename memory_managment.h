@@ -4,7 +4,6 @@
 #include <stdlib.h>
 
 #include "labyrinth.h"
-#include "bst.h"
 #include "queue.h"
 
 //todo increase
@@ -27,8 +26,6 @@ void free_labyrinth(Labyrinth *labyrinth);
 
 void free_queue(NumFIFO *fifo);
 
-//todo rewrite this iteratively
-void free_tree(BST *node);
 
 
 #endif //_MEMORY_MANAGMENT_
