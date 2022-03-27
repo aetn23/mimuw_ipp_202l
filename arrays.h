@@ -21,6 +21,7 @@ typedef struct NumbersArray {
 
 
 void init_numbers_array(NumbersArray *num_array, size_t alloc_size);
+
 void push_back_number(NumbersArray *num_array, size_t number);
 
 void init_bool_array(BoolArray *bool_array, size_t size);
@@ -31,5 +32,6 @@ size_t array_product(const NumbersArray *array, bool *overflow, size_t begin, si
 
 void printf_array(NumbersArray *array);
 
-void calculate_partial_sums (NumbersArray *array, NumbersArray *result);
+void calculate_partial_sums(NumbersArray *array, NumbersArray *result);
+
 #endif //_ARRAYS_

@@ -4,20 +4,36 @@
 #include "memory_managment.h"
 
 #define HEXAl_AS_BIN_SIZE 4
+#define BASE_TEN 10
+#define BASE_SIXTEEN 16
+#define BASE_TWO 2
 
 //todo this is inconsitent
-void init_string(String *str) {
-	str->content = malloc_wrapper(sizeof(char) * START_ARRAY_SIZE);
-	check_alloc(str->content);
-	str->size = 0;
-	str->allocated_size = START_ARRAY_SIZE;
+void init_string(String *str, size_t size) {
+	if (size != 0) {
+		str->content = malloc_wrapper(sizeof(char) * START_ARRAY_SIZE);
+		check_alloc(str->content);
+		str->size = 0;
+		str->allocated_size = START_ARRAY_SIZE;
+	} else {
+		str->content = NULL;
+		str->size = 0;
+		str->allocated_size = START_ARRAY_SIZE;
+	}
 }
 
-void init_line(Line *line) {
-	line->content = NULL;
-	line->size = 0;
-	line->allocated_size = 0;
-	line->state = true;
+void init_line(Line *line, size_t size) {
+	if (size != 0) {
+		line->content = malloc_wrapper(size * sizeof(char));
+		line->size = 0;
+		line->allocated_size = size;
+		line->state = true;
+	} else {
+		line->content = NULL;
+		line->size = 0;
+		line->allocated_size = 0;
+		line->state = true;
+	}
 }
 
 //todo think if this function should exist
@@ -47,19 +63,6 @@ void insert_str(String *str, const char to_insert, const size_t location) {
 	str->size++;
 }
 
-void concat_str(String *str, char *to_concat) {
-	size_t to_concat_len = strlen(to_concat);
-	while (to_concat_len + str->size >= str->allocated_size) {
-		str->content = realloc_wrapper(str->content, sizeof(char) * REALLOC_MULTIPLIER * str->allocated_size);
-		check_alloc(str->content);
-		str->allocated_size = REALLOC_MULTIPLIER * str->allocated_size;
-	}
-	for (size_t i = 0; i < to_concat_len; i++)
-		str->content[i + str->size] = to_concat[i];
-
-	str->size += to_concat_len;
-}
-
 void clear_str(String *str) {
 	for (size_t i = 0; i < str->size; i++)
 		str->content[i] = '\0';
@@ -69,26 +72,19 @@ void clear_str(String *str) {
 size_t str_to_size_t(const String *str) {
 	char *str_end;
 
-	return strtoull(str->content, &str_end, 10);
+	return strtoull(str->content, &str_end, BASE_TEN);
 }
 
-
-//write and algot  that takes hexal str and turns into binary array, but:
-//it has to be done in reverse, ie:
-//0x7 = 0111,
-//so res = 1110
-//0x76 = 0111 0110
-// so res = 0110 1110
-//to do it cleverly.
 void hexal_to_reverse_binary(String *str, BoolArray *result) {
+	//todo consider do while
 	for (size_t i = str->size - 1;; i--) {
 		char character = str->content[i];
-		long number = strtol(&character, NULL, 16);
+		long number = strtol(&character, NULL, BASE_SIXTEEN);
 
 		for (size_t j = 0; j < HEXAl_AS_BIN_SIZE; j++) {
 			//printf("%d", (bool)(number % 2));
-			push_back_bool(result, (bool)(number % 2));
-			number /= 2;
+			push_back_bool(result, (bool) (number % BASE_TWO));
+			number /= BASE_TWO;
 		}
 		if (i == 0)
 			break;

@@ -5,6 +5,7 @@
 #include <stdbool.h>
 
 #include "arrays.h"
+
 //FIFO can be implemented using linked list, which is memory effective, but
 //has insertion time complexity of O(n) which is huge drawback, since in this
 //task insertion to queue will be used much. Also linked list do not have
@@ -18,8 +19,11 @@ typedef struct NumFIFO {
 
 
 void init_fifo(NumFIFO *fifo, size_t alloc_size);
+
 void enqueue(NumFIFO *fifo, size_t value);
+
 size_t dequeue(NumFIFO *fifo, bool *end);
+
 bool is_empty_queue(NumFIFO *queue);
 
 #endif //_QUEUE_
