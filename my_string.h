@@ -4,6 +4,8 @@
 #include <stddef.h>
 #include <stdbool.h>
 
+#include "arrays.h"
+
 typedef struct String {
 	char *content;
 	size_t size;
@@ -31,6 +33,9 @@ void insert_line (Line *line, char to_insert, size_t location);
 void clear_str(String *str);
 
 String hexal_to_binary(const String *str);
+
+void hexal_to_reverse_binary(String *str, BoolArray *result);
+
 
 size_t str_to_size_t(const String *str);
 

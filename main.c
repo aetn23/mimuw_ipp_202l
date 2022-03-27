@@ -7,26 +7,27 @@
 
 int main() {
 	Labyrinth labyrinth;
+	init_labyrinth(&labyrinth, START_ARRAY_SIZE);
 	bool good_indput = parse(&labyrinth);
 
 	//printf("%s\n", labyrinth.walls_hexal_version.content);
-
-	if(good_indput) {
+	if (good_indput) {
 		if (is_wall(labyrinth.start, &labyrinth))
-			handle_wrong_input(2);
+			handle_wrong_input(4);
 		else if (is_wall(labyrinth.finish, &labyrinth))
-			handle_wrong_input(3);
-		else {		
-		size_t result = get_result(&labyrinth);
-		if (result == 0)
-			printf("NO WAY\n");
-		else
-			printf("%zu\n" ,result);
+			handle_wrong_input(4);
+		else if (labyrinth.start == labyrinth.finish) {
+			printf("0\n");
+		} else {
+			size_t result = get_result(&labyrinth);
+
+			if (result == 0)
+				printf("NO WAY\n");
+			else
+				printf("%zu\n", result);
 		}
 	}
-
 	free_labyrinth(&labyrinth);
-
 
 
 	return 0;

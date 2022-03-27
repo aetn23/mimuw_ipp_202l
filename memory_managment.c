@@ -14,6 +14,13 @@ void *malloc_wrapper(size_t size) {
 	return result;
 }
 
+void *calloc_wraper(size_t num, size_t size) {
+	void *result = calloc(num, size);
+	check_alloc(result);
+
+	return result;
+}
+
 void *realloc_wrapper(void *ptr, size_t size) {
 	ptr = realloc(ptr, size);
 	check_alloc(ptr);
@@ -26,18 +33,23 @@ void free_numbers_array(NumbersArray *array) {
 		free(array->array);
 }
 
+void free_bool_array(BoolArray *array) {
+	if (array->array != NULL)
+		free(array->array);
+}
+
 void free_string(String *str) {
 	if (str->content != NULL)
 		free(str->content);
 }
 
 void free_labyrinth(Labyrinth *labyrinth) {
-	free_numbers_array(&labyrinth->dimensions);
-	if (labyrinth->is_hexal_version && labyrinth->walls_hexal_version.content != NULL)
-		free(labyrinth->walls_hexal_version.content);
-	else if (!labyrinth->is_hexal_version && labyrinth->walls_R_version.array != NULL)
-		free(labyrinth->walls_R_version.array);
-	free_numbers_array(&labyrinth->partial_array);
+	if (labyrinth->walls.array != NULL)
+		free_bool_array(&labyrinth->walls);
+	if (labyrinth->dimensions.array != NULL)
+		free_numbers_array(&labyrinth->dimensions);
+	if (labyrinth->partial_array.array != NULL)
+		free_numbers_array(&labyrinth->partial_array);
 }
 
 void free_queue(NumFIFO *fifo) {

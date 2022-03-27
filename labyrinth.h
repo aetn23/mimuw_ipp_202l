@@ -11,12 +11,9 @@
 typedef struct Labyrinth {
 	NumbersArray dimensions;
 	NumbersArray partial_array;
+	BoolArray walls;
 	size_t block_count;
 	size_t start, finish;
-	union {
-		NumbersArray walls_R_version;
-		String walls_hexal_version;
-	};
 	bool is_hexal_version;
 
 } Labyrinth;

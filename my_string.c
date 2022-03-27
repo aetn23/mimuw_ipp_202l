@@ -5,6 +5,8 @@
 #include "memory_managment.h"
 
 
+#define HEXAl_AS_BIN_SIZE 4
+
 //todo this is inconsitent
 void init_string(String *str) {
 	str->content = malloc_wrapper(sizeof(char) * START_ARRAY_SIZE);
@@ -25,7 +27,7 @@ void insert(char *str, char to_insert, const size_t location) {
 	str[location] = to_insert;
 }
 
-void insert_line (Line *line, char to_insert, size_t location) {
+void insert_line(Line *line, char to_insert, size_t location) {
 	while (line->allocated_size <= location) {
 		line->content = realloc_wrapper(line->content, line->allocated_size * REALLOC_MULTIPLIER);
 		check_alloc(line->content);
@@ -72,86 +74,24 @@ size_t str_to_size_t(const String *str) {
 	return strtoull(str->content, &str_end, 10);
 }
 
-void string_rev(String *str) {
-	char tmp;
-	size_t i = str->size - 1;
-	size_t j = 0;
 
-	while (i > j) {
-		tmp = str->content[i];
-		str->content[i] = str->content[j];
-		str->content[j] = tmp;
-		i--;
-		j++;
-	}
-}
+//write and algot  that takes hexal str and turns into binary array, but:
+//it has to be done in reverse, ie:
+//0x7 = 0111,
+//so res = 1110
+//0x76 = 0111 0110
+// so res = 0110 1110
+//to do it cleverly.
+void hexal_to_reverse_binary(String *str, BoolArray *result) {
+	for (size_t i = str->size - 1;; i--) {
+		char character = str->content[i];
+		long number = strtol(&character, NULL, 16);
 
-//todo write an algo to do it instead of switch
-String hexal_to_binary(const String *hexal) {
-	String result;
-	init_string(&result);
-	size_t i = 0;
-	//printf("%s\n", hexal->content);
-	for (; i < hexal->size; i++) {
-		char character = hexal->content[i];
-		//printf("%c\n", character);
-		switch (tolower(character)) {
-			case '0':
-				concat_str(&result, "0000");
-				break;
-			case '1':
-				concat_str(&result, "0001");
-				break;
-			case '2':
-				concat_str(&result, "0010");
-				break;
-			case '3':
-				concat_str(&result, "0011");
-				break;
-			case '4':
-				concat_str(&result, "0100");
-				break;
-			case '5':
-				concat_str(&result, "0101");
-				break;
-			case '6':
-				concat_str(&result, "0110");
-				break;
-			case '7':
-				concat_str(&result, "0111");
-				break;
-			case '8':
-				concat_str(&result, "1000");
-				break;
-			case '9':
-				concat_str(&result, "1001");
-				break;
-			case 'a':
-				concat_str(&result, "1010");
-				break;
-			case 'b':
-				concat_str(&result, "1011");
-				break;
-			case 'c':
-				concat_str(&result, "1100");
-				break;
-			case 'd':
-				concat_str(&result, "1101");
-				break;
-			case 'e':
-				concat_str(&result, "1110");
-				break;
-			case 'f':
-				concat_str(&result, "1111");
-				break;
-			default:
-				break;
+		for (size_t j = 0; j < HEXAl_AS_BIN_SIZE; j++) {
+			push_back_bool(result, (bool)(number % 2));
+			number /= 2;
 		}
+		if (i == 0)
+			break;
 	}
-	//printf("%s\n", result.content);
-	string_rev(&result);
-	//printf("%s\n", result.content);
-	insert_str(&result, '\0', result.size);
-	//printf("result %s\n", result.content);
-	return result;
 }

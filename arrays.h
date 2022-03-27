@@ -10,6 +10,7 @@
 typedef struct BoolArray {
 	bool *array;
 	size_t size;
+	size_t allocated_size;
 } BoolArray;
 
 typedef struct NumbersArray {
@@ -22,7 +23,9 @@ typedef struct NumbersArray {
 void init_numbers_array(NumbersArray *num_array, size_t alloc_size);
 void push_back_number(NumbersArray *num_array, size_t number);
 
-void init_bool_array(BoolArray *bool_array, const size_t size, bool alloc);
+void init_bool_array(BoolArray *bool_array, size_t size);
+
+void push_back_bool(BoolArray *num_array, size_t value);
 
 size_t array_product(const NumbersArray *array, bool *overflow, size_t begin, size_t end);
 
