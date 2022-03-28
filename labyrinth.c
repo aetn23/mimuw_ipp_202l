@@ -40,8 +40,6 @@ void number_rep_to_array_rep(const size_t number, const Labyrinth *labyrinth,
 	}
 }
 
-//todo think if emplace calculation is better and think of speeding up array_prodcut by
-//calculating it in array
 inline bool is_wall(size_t block, Labyrinth *labyrinth) {
 
 	return labyrinth->walls.array[block];
@@ -79,6 +77,42 @@ void get_new_neighbours(size_t block, Labyrinth *labyrinth, NumFIFO *result, Num
 	}
 }
 
+void new_get_new_neighbours(size_t block, Labyrinth *labyrinth, NumFIFO *result, NumbersArray *helper_array1) {
+	size_t i = 0;
+	size_t neighbour;
+
+	//todo fix code repetition
+	//printf("BLOCK %zu: ", block);
+	for (; i < labyrinth->partial_array.size - 1; i++) {
+		//printf("\n%zu\n", i);
+		if (labyrinth->block_count - labyrinth->partial_array.array[i] >=  block ) {
+			neighbour = block + labyrinth->partial_array.array[i];
+			size_t a = (int) ((block / labyrinth->partial_array.array[i + 1]));
+			size_t b = (int) (neighbour / labyrinth->partial_array.array[i + 1]);
+
+			if (!is_wall(neighbour, labyrinth) &&
+			    a == b) {
+				enqueue(result, neighbour);
+				labyrinth->walls.array[neighbour] = true;
+				//printf(" NEIGHBOUR %zu ", neighbour);
+			}
+		}
+
+		if (block >= labyrinth->partial_array.array[i]) {
+			neighbour = block - labyrinth->partial_array.array[i];
+			size_t a = (int) ((block / labyrinth->partial_array.array[i + 1]));
+			size_t b = (int) (neighbour / labyrinth->partial_array.array[i + 1]);
+
+			if (!is_wall(neighbour, labyrinth) &&
+			    a == b) {
+				enqueue(result, neighbour);
+				labyrinth->walls.array[neighbour] = true;
+				//printf("NEIGHBOUR %zu ", neighbour);
+			}
+		}
+	}
+	//printf("\n");
+}
 
 //todo describe what is happening
 size_t get_result(Labyrinth *labyrinth) {
@@ -94,7 +128,6 @@ size_t get_result(Labyrinth *labyrinth) {
 	NumFIFO *active_queue = &queue_0;
 	NumFIFO *non_active_queue = &queue_1;
 
-
 	bool queue_0_active = true;
 	bool queue_end = false;
 
@@ -106,9 +139,8 @@ size_t get_result(Labyrinth *labyrinth) {
 
 	//printf("%zu\n\n", labyrinth->walls.size);
 	labyrinth->walls.array[block] = true;
-	get_new_neighbours(block, labyrinth, active_queue, &helper_array1);
+	new_get_new_neighbours(block, labyrinth, active_queue, &helper_array1);
 	while (!(is_empty_queue(&queue_0) && is_empty_queue(&queue_1))) {
-		//printf("block: %zu\n ", block);
 
 		block = dequeue(active_queue, &queue_end);
 		if (queue_end) {
@@ -118,14 +150,14 @@ size_t get_result(Labyrinth *labyrinth) {
 			length++;
 			continue;
 		}
-
+		//printf("block: %zu\n ", block);
 
 		if (block == labyrinth->finish) {
 			found = true;
 			break;
 		}
 
-		get_new_neighbours(block, labyrinth, non_active_queue, &helper_array1);
+		new_get_new_neighbours(block, labyrinth, non_active_queue, &helper_array1);
 	}
 
 	free_queue(&queue_0);

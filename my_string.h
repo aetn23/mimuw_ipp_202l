@@ -20,7 +20,7 @@ typedef struct Line {
 	bool state;
 } Line;
 
-void init_line(Line *line);
+void init_line(Line *line, size_t size);
 
 void init_string(String *str, size_t size);
 

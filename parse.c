@@ -21,7 +21,7 @@
 
 Line read_line() {
 	Line line;
-	init_line(&line);
+	init_line(&line, 0);
 	ssize_t length;
 	length = getline(&line.content, &line.allocated_size, stdin);
 
@@ -70,7 +70,7 @@ bool parse_first_3_lines_helper(Labyrinth *labyrinth, NumbersArray *numbers, Lin
 	bool is_previous_blank = true;
 	size_t i = 0;
 	String number_as_string;
-	init_string(&number_as_string);
+	init_string(&number_as_string, START_ARRAY_SIZE);
 
 	for (; i < line->size; i++) {
 		char character = line->content[i];
@@ -232,7 +232,7 @@ bool parse_fourth_line_helper(Labyrinth *labyrinth, String *result_hexal_variant
 bool parse_fourth_line(Labyrinth *labyrinth, Line *line, size_t line_number) {
 
 	String result_hexal_variant;
-	init_string(&result_hexal_variant);
+	init_string(&result_hexal_variant, START_ARRAY_SIZE);
 	NumbersArray result_R_variant;
 	init_numbers_array(&result_R_variant, START_ARRAY_SIZE);
 
