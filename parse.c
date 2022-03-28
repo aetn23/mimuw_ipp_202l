@@ -37,6 +37,15 @@ Line read_line() {
 	return line;
 }
 
+size_t get_first_nonspace_location(Line *line, size_t current_pos) {
+	size_t i = 0;
+
+	for (; i < line->size; i++)
+		if (!isspace(line->content[i]))
+			return i;
+	return i;
+}
+
 void get_walls_r_version(Labyrinth *labyrinth, NumbersArray *R_line, BoolArray *result) {
 	size_t a = R_line->array[0], b = R_line->array[1], m = R_line->array[2],
 					r = R_line->array[3], s_0 = R_line->array[4], s_i = s_0;
@@ -64,7 +73,6 @@ void get_walls_r_version(Labyrinth *labyrinth, NumbersArray *R_line, BoolArray *
 }
 
 //todo add check if star coordinates lesser than dimensions
-
 bool parse_first_3_lines_helper(Labyrinth *labyrinth, NumbersArray *numbers, Line *line,
                                 size_t line_number, size_t min_number_allowed) {
 	bool is_previous_blank = true;
@@ -265,6 +273,7 @@ bool parse_fourth_line(Labyrinth *labyrinth, Line *line, size_t line_number) {
 
 		labyrinth->is_hexal_version = true;
 		hexal_to_reverse_binary(&result_hexal_variant, &labyrinth->walls);
+		labyrinth->walls.size = labyrinth->block_count;
 	}
 
 	free_numbers_array(&result_R_variant);
