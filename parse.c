@@ -37,14 +37,39 @@ Line read_line() {
 	return line;
 }
 
-size_t get_first_nonspace_location(Line *line, size_t current_pos) {
-	size_t i = 0;
-
+size_t get_first_nonspace_location(Line *line, size_t i) {
 	for (; i < line->size; i++)
 		if (!isspace(line->content[i]))
-			return i;
+			return i--;
 	return i;
 }
+
+bool parse_number(NumbersArray *numbers, Line *line, size_t min_number_allowed, String *number_as_string, size_t *i) {
+	char character;
+
+	for(; *i < line->size; (*i)++) {
+		character = line->content[*i];
+
+
+		if (isspace(character)) {
+			insert_str(number_as_string, '\0', number_as_string->size);
+
+			size_t number = str_to_size_t(number_as_string);
+			push_back_number(numbers, number);
+
+			if (errno == ERANGE || number < min_number_allowed)
+				return false;
+
+			clear_str(number_as_string);
+
+			return true;
+		} else {
+			insert_str(number_as_string, character, number_as_string->size);
+		}
+	}
+	return true;
+}
+
 
 void get_walls_r_version(Labyrinth *labyrinth, NumbersArray *R_line, BoolArray *result) {
 	size_t a = R_line->array[0], b = R_line->array[1], m = R_line->array[2],
@@ -75,50 +100,25 @@ void get_walls_r_version(Labyrinth *labyrinth, NumbersArray *R_line, BoolArray *
 //todo add check if star coordinates lesser than dimensions
 bool parse_first_3_lines_helper(Labyrinth *labyrinth, NumbersArray *numbers, Line *line,
                                 size_t line_number, size_t min_number_allowed) {
-	bool is_previous_blank = true;
 	size_t i = 0;
 	String number_as_string;
 	init_string(&number_as_string, START_ARRAY_SIZE);
 
 	for (; i < line->size; i++) {
+
+		i = get_first_nonspace_location(line, i);
+		if (i >= line->size)
+			break;
+
+
 		char character = line->content[i];
 
-		if (!(isspace(character) || isdigit(character))) {
+		if ((!isdigit(character) || !parse_number(numbers, line, min_number_allowed, &number_as_string, &i))) {
 			handle_wrong_input(line_number);
+
 			free_string(&number_as_string);
 
 			return false;
-		}
-
-		if (is_previous_blank) {
-			if (isspace(character)) {
-				continue;
-			} else if (isdigit(character)) {
-				is_previous_blank = false;
-
-				insert_str(&number_as_string, character, 0);
-			}
-		} else {
-			if (isspace(character)) {
-				insert_str(&number_as_string, '\0', number_as_string.size);
-
-				size_t number = str_to_size_t(&number_as_string);
-				push_back_number(numbers, number);
-
-				if (errno == ERANGE || number < min_number_allowed) {
-					handle_wrong_input(line_number);
-
-					free_string(&number_as_string);
-
-					return false;
-				}
-
-				clear_str(&number_as_string);
-
-				is_previous_blank = true;
-			} else if (isdigit(character)) {
-				insert_str(&number_as_string, character, number_as_string.size);
-			}
 		}
 	}
 
