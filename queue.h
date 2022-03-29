@@ -17,7 +17,6 @@ typedef struct NumFIFO {
 	size_t first_pos;
 } NumFIFO;
 
-
 void init_fifo(NumFIFO *fifo, size_t alloc_size);
 
 void enqueue(NumFIFO *fifo, size_t value);

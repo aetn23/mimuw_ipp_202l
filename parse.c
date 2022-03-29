@@ -18,6 +18,7 @@
 #define TWO_TO_THRITYTWO 4294967296UL
 #define MIN_NUMBER_FIRST_3_LINES 1
 #define MIN_NUMBER_FOURTH_LINE 0
+#define MAX_NUM_LINES 4
 
 Line read_line() {
 	Line line;
@@ -44,31 +45,6 @@ size_t get_first_nonspace_location(Line *line, size_t i) {
 	return i;
 }
 
-bool parse_number(NumbersArray *numbers, Line *line, size_t min_number_allowed, String *number_as_string, size_t *i) {
-	char character;
-
-	for(; *i < line->size; (*i)++) {
-		character = line->content[*i];
-
-
-		if (isspace(character)) {
-			insert_str(number_as_string, '\0', number_as_string->size);
-
-			size_t number = str_to_size_t(number_as_string);
-			push_back_number(numbers, number);
-
-			if (errno == ERANGE || number < min_number_allowed)
-				return false;
-
-			clear_str(number_as_string);
-
-			return true;
-		} else {
-			insert_str(number_as_string, character, number_as_string->size);
-		}
-	}
-	return true;
-}
 
 
 void get_walls_r_version(Labyrinth *labyrinth, NumbersArray *R_line, BoolArray *result) {
@@ -97,6 +73,33 @@ void get_walls_r_version(Labyrinth *labyrinth, NumbersArray *R_line, BoolArray *
 	free_numbers_array(&w_numbers);
 }
 
+bool parse_number(NumbersArray *numbers, Line *line, size_t min_number_allowed, String *number_as_string, size_t *i) {
+	char character;
+
+	for (; *i < line->size; (*i)++) {
+		character = line->content[*i];
+
+
+		if (isspace(character)) {
+			insert_str(number_as_string, '\0', number_as_string->size);
+
+			size_t number = str_to_size_t(number_as_string);
+			push_back_number(numbers, number);
+
+			if (errno == ERANGE || number < min_number_allowed)
+				return false;
+
+			clear_str(number_as_string);
+
+			return true;
+		} else {
+			insert_str(number_as_string, character, number_as_string->size);
+		}
+	}
+	return true;
+}
+
+
 //todo add check if star coordinates lesser than dimensions
 bool parse_first_3_lines_helper(Labyrinth *labyrinth, NumbersArray *numbers, Line *line,
                                 size_t line_number, size_t min_number_allowed) {
@@ -109,7 +112,6 @@ bool parse_first_3_lines_helper(Labyrinth *labyrinth, NumbersArray *numbers, Lin
 		i = get_first_nonspace_location(line, i);
 		if (i >= line->size)
 			break;
-
 
 		char character = line->content[i];
 
@@ -156,22 +158,17 @@ bool parse_first_3_lines(Labyrinth *labyrinth, Line *line, size_t line_number) {
 
 		return false;
 	} else if (line_number == 2) {
-		//fix_order(&numbers, labyrinth);
 
 		labyrinth->start = array_rep_to_number_rep(&numbers, labyrinth);
 		free_numbers_array(&numbers);
 
 	} else if (line_number == 3) {
-		//fix_order(&numbers, labyrinth);
 
 		labyrinth->finish = array_rep_to_number_rep(&numbers, labyrinth);
 		free_numbers_array(&numbers);
 
 	}
 
-	//for(size_t i = 0; i < numbers.size; i ++) printf("%zu\n", numbers.array[i]);
-
-	//free_numbers_array(&numbers);
 	return true;
 }
 

@@ -16,7 +16,6 @@ size_t dequeue(NumFIFO *fifo, bool *end) {
 		*end = true;
 		return 0;
 	} else {
-		//printf("DEQUE: %zu\n", fifo->array.array[fifo->first_pos]);
 		*end = false;
 		return fifo->array.array[fifo->first_pos++];
 	}
