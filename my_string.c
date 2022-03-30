@@ -8,7 +8,6 @@
 
 #define BASE_TWO 2
 
-//todo this is inconsitent
 void init_string(String *str, size_t size) {
 	if (size != 0) {
 		str->content = malloc_wrapper(sizeof(char) * START_ARRAY_SIZE);
@@ -77,12 +76,16 @@ size_t str_to_size_t(const String *str) {
 
 void hexal_to_reverse_binary(String *str, BoolArray *result) {
 	char *character = malloc(2 * sizeof(char));
-	*(character + 1) = '\0';
-	//todo consider do while
+	*(character + 1) = NULL_CHAR;
+	size_t distance_since_last_one = 0;
 	for (size_t i = str->size - 1;; i--) {
 		*character = str->content[i];
 		long number = strtol(character, NULL, BASE_SIXTEEN);
 		for (size_t j = 0; j < HEXAl_AS_BIN_SIZE; j++) {
+			if (number % BASE_TWO == 0)
+				distance_since_last_one++;
+			else 
+				distance_since_last_one = 0;
 			//printf("%d", (bool)(number % 2));
 			push_back_bool(result, (bool) (number % BASE_TWO));
 			number /= BASE_TWO;
@@ -90,6 +93,7 @@ void hexal_to_reverse_binary(String *str, BoolArray *result) {
 		if (i == 0)
 			break;
 	}
+	result->size -= distance_since_last_one;
 	//printf("\n");
 	free(character);
 }

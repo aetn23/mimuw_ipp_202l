@@ -22,7 +22,6 @@
 #define MIN_NUMBER_FOURTH_LINE 0
 #define MAX_NUM_LINES 4
 
-#define NULL_CHAR '\0'
 #define ISSPACE_DUMMY '\t'
 
 Line read_line() {
@@ -200,13 +199,13 @@ bool parse_fourth_line_helper(String *result_hexal_variant,
 	}
 
 	character = line->content[i];
-	//printf("%c\n", character);
 
 	if (character == 'R') {
 		line->content[i] = ISSPACE_DUMMY;
 		if (parse_first_3_lines_helper(result_R_variant, line, line_number, MIN_NUMBER_FOURTH_LINE)) {
 			bool is_R_line_condition_fullfilled = 
 			result_R_variant->array[2] == 0 || result_R_variant->size != 5;
+
 			if (!is_R_line_condition_fullfilled) {
 				handle_wrong_input(line_number);
 
@@ -271,8 +270,10 @@ bool parse_fourth_line(Labyrinth *labyrinth, const Line *line, const size_t line
 		// In C strings are counted up to null byte.
 		--result_hexal_variant.size;
 
-		//todo this is wrong
-		if ((4 * result_hexal_variant.size) - 1 > back_num_array(&labyrinth->partial_array)) {
+
+		hexal_to_reverse_binary(&result_hexal_variant, &labyrinth->walls);
+		//printf("%zu\n", labyrinth->walls.size);
+		if (labyrinth->walls.size - 1 >= back_num_array(&labyrinth->partial_array)) {
 			handle_wrong_input(line_number);
 			free_numbers_array(&result_R_variant);
 			free_string(&result_hexal_variant);
@@ -280,7 +281,6 @@ bool parse_fourth_line(Labyrinth *labyrinth, const Line *line, const size_t line
 			return false;
 		}
 
-		hexal_to_reverse_binary(&result_hexal_variant, &labyrinth->walls);
 		labyrinth->walls.size = back_num_array(&labyrinth->partial_array);
 	}
 
@@ -310,8 +310,8 @@ bool parse(Labyrinth *labyrinth) {
 		//will be shorter and nicer if they could assume that \n always will be 
 		//present. Hence, this insertion.
 		if (lines_count == 4 && !isspace(line.content[line.size - 1])) {
-			insert_line(&line, '\n', line.size);
-			insert_line(&line, '\0', line.size);
+			insert_line(&line, ISSPACE_DUMMY, line.size);
+			insert_line(&line, NULL_CHAR, line.size);
 			line.size--;
 		}
 

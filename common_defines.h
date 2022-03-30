@@ -7,4 +7,7 @@
 #define WALL true
 #define NONWALL false
 
+#define NULL_CHAR '\0'
+
+
 #endif //_COMMON_DEFINES_
