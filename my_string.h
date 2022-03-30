@@ -34,8 +34,7 @@ void clear_str(String *str);
 
 void hexal_to_reverse_binary(String *str, BoolArray *result);
 
-
-size_t str_to_size_t(const String *str);
+size_t str_to_size_t(const String *str, const size_t base);
 
 //void concat_str(String *str, char *to_concat);
 

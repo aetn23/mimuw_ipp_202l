@@ -3,24 +3,6 @@
 #include "arrays.h"
 #include "memory_managment.h"
 
-//todo not needed
-//There is a possibility of overflow, hence if.
-size_t array_product(const NumbersArray *array, bool *overflow, size_t begin, size_t end) {
-	size_t result = 1;
-
-	for (size_t i = begin; i < end; i++) {
-		if (result >= SIZE_MAX / 2 && array->array[i] != 1) {
-			*overflow = true;
-			return 0;
-		} else {
-			result *= array->array[i];
-		}
-	}
-
-	*overflow = false;
-	return result;
-}
-
 void init_bool_array(BoolArray *bool_array, const size_t size) {
 	if (size != 0) {
 		bool_array->array = malloc(size * sizeof(bool));

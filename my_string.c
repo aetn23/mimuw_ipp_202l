@@ -2,10 +2,10 @@
 
 #include "my_string.h"
 #include "memory_managment.h"
+#include "common_defines.h"
 
 #define HEXAl_AS_BIN_SIZE 4
-#define BASE_TEN 10
-#define BASE_SIXTEEN 16
+
 #define BASE_TWO 2
 
 //todo this is inconsitent
@@ -69,18 +69,19 @@ void clear_str(String *str) {
 	str->size = 0;
 }
 
-size_t str_to_size_t(const String *str) {
+size_t str_to_size_t(const String *str, const size_t base) {
 	char *str_end;
 
-	return strtoull(str->content, &str_end, BASE_TEN);
+	return strtoull(str->content, &str_end, base);
 }
 
 void hexal_to_reverse_binary(String *str, BoolArray *result) {
+	char *character = malloc(2 * sizeof(char));
+	*(character + 1) = '\0';
 	//todo consider do while
 	for (size_t i = str->size - 1;; i--) {
-		char character = str->content[i];
-		long number = strtol(&character, NULL, BASE_SIXTEEN);
-
+		*character = str->content[i];
+		long number = strtol(character, NULL, BASE_SIXTEEN);
 		for (size_t j = 0; j < HEXAl_AS_BIN_SIZE; j++) {
 			//printf("%d", (bool)(number % 2));
 			push_back_bool(result, (bool) (number % BASE_TWO));
@@ -90,4 +91,5 @@ void hexal_to_reverse_binary(String *str, BoolArray *result) {
 			break;
 	}
 	//printf("\n");
+	free(character);
 }

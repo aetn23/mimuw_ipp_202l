@@ -28,8 +28,6 @@ void init_bool_array(BoolArray *bool_array, size_t size);
 
 void push_back_bool(BoolArray *num_array, size_t value);
 
-size_t array_product(const NumbersArray *array, bool *overflow, size_t begin, size_t end);
-
 void printf_array(NumbersArray *array);
 
 void calculate_partial_products(NumbersArray *array, NumbersArray *result, bool *overflow);
