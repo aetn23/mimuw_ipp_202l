@@ -11,7 +11,6 @@ void init_labyrinth(Labyrinth *labyrinth, size_t alloc_size) {
 	init_bool_array(&labyrinth->walls, 0);
 	labyrinth->start = 0;
 	labyrinth->finish = 0;
-	labyrinth->is_hexal_version = false;
 }
 
 //todo describe what is happening
@@ -33,7 +32,7 @@ void get_new_neighbours_helper (size_t block, Labyrinth *labyrinth, NumFIFO *res
 	size_t block_i_dimension = block / labyrinth->partial_array.array[i + 1];
 	size_t neigbour_i_dimension = neighbour / labyrinth->partial_array.array[i + 1];
 
-	if (neighbour < labyrinth->block_count && !is_wall(neighbour, labyrinth)
+	if (neighbour < back_num_array(&labyrinth->partial_array) && !is_wall(neighbour, labyrinth)
 			&& block_i_dimension == neigbour_i_dimension) {
 		enqueue(result, neighbour);
 		labyrinth->walls.array[neighbour] = true;
@@ -48,7 +47,7 @@ void new_get_new_neighbours(size_t block, Labyrinth *labyrinth, NumFIFO *result)
 	//printf("BLOCK %zu: ", block);
 	for (; i < labyrinth->partial_array.size - 1; i++) {
 		//printf("\n%zu\n", i);
-		if (labyrinth->block_count - labyrinth->partial_array.array[i] >=  block ) {
+		if (back_num_array(&labyrinth->partial_array) - labyrinth->partial_array.array[i] >=  block ) {
 			neighbour = block + labyrinth->partial_array.array[i];
 			get_new_neighbours_helper(block, labyrinth, result, neighbour, i);
 		}

@@ -32,6 +32,6 @@ void printf_array(NumbersArray *array);
 
 void calculate_partial_products(NumbersArray *array, NumbersArray *result, bool *overflow);
 
-size_t back_num_array(NumbersArray *array);
+size_t back_num_array(const NumbersArray *array);
 
 #endif //_ARRAYS_

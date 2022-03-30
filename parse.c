@@ -23,6 +23,7 @@
 #define MAX_NUM_LINES 4
 
 #define NULL_CHAR '\0'
+#define ISSPACE_DUMMY '\t'
 
 Line read_line() {
 	Line line;
@@ -50,7 +51,7 @@ size_t get_first_nonspace_location(const Line *line, size_t i) {
 }
 
 // Variabales are named after formula in task's description.
-void get_walls_r_version(const Labyrinth *labyrinth, const NumbersArray *R_line, BoolArray *result) {
+void get_walls_r_version(const Labyrinth *labyrinth, const NumbersArray *R_line, BoolArray *walls) {
 	size_t a = R_line->array[0], b = R_line->array[1], m = R_line->array[2],
 					r = R_line->array[3], s_0 = R_line->array[4], s_i = s_0;
 
@@ -58,16 +59,16 @@ void get_walls_r_version(const Labyrinth *labyrinth, const NumbersArray *R_line,
 	init_numbers_array(&w_numbers, r);
 	size_t i = 0;
 
-	//Count s1, s2, ..., sr
+	// Count s1, s2, ..., sr acoording to formula in task description.
 	for (; i < r; i++) {
 		s_i = (a * s_i + b) % m;
-		push_back_number(&w_numbers, s_i % labyrinth->partial_array.array[labyrinth->partial_array.size - 1]);
+		push_back_number(&w_numbers, s_i % back_num_array(&labyrinth->partial_array));
 	}
 
-	// Fill walls array with walls postitions.
+	// Fill walls array with walls.
 	for (i = 0; i < w_numbers.size; i++) {
-		while (w_numbers.array[i] < labyrinth->block_count) {
-			result->array[w_numbers.array[i]] = true;
+		while (w_numbers.array[i] < back_num_array(&labyrinth->partial_array)) {
+			walls->array[w_numbers.array[i]] = WALL;
 			if (w_numbers.array[i] > SIZE_MAX - TWO_TO_THRITYTWO)
 				break;
 			else
@@ -79,7 +80,7 @@ void get_walls_r_version(const Labyrinth *labyrinth, const NumbersArray *R_line,
 
 bool parse_number(NumbersArray *numbers, const Line *line, 
 				const size_t min_number_allowed,
-				 String *number_as_string, size_t *i, size_t base) {
+				 String *number_as_string, size_t *i) {
 	char character;
 
 	for (; *i < line->size; (*i)++) {
@@ -89,7 +90,7 @@ bool parse_number(NumbersArray *numbers, const Line *line,
 		if (isspace(character)) {
 			insert_str(number_as_string, NULL_CHAR, number_as_string->size);
 
-			size_t number = str_to_size_t(number_as_string, base);
+			size_t number = str_to_size_t(number_as_string);
 			push_back_number(numbers, number);
 
 			if (errno == ERANGE || number < min_number_allowed)
@@ -107,7 +108,6 @@ bool parse_number(NumbersArray *numbers, const Line *line,
 	return true;
 }
 
-//todo add check if start coordinates lesser than dimensions
 bool parse_first_3_lines_helper(NumbersArray *numbers, const Line *line,
                                 const size_t line_number,
 								const size_t min_number_allowed) {
@@ -125,7 +125,7 @@ bool parse_first_3_lines_helper(NumbersArray *numbers, const Line *line,
 
 		if ((!isdigit(character) || !parse_number(numbers, line, 
 													min_number_allowed,
-													 &number_as_string, &i, BASE_TEN))) {
+													 &number_as_string, &i))) {
 			handle_wrong_input(line_number);
 
 			free_string(&number_as_string);
@@ -161,7 +161,7 @@ bool parse_first_3_lines(Labyrinth *labyrinth, const Line *line, const size_t li
 			return false;
 		}
 
-		labyrinth->block_count = back_num_array(&labyrinth->partial_array);
+	
 	} else if (numbers.size != labyrinth->dimensions.size) {
 		free_numbers_array(&numbers);
 		handle_wrong_input(line_number);
@@ -199,9 +199,11 @@ bool parse_fourth_line_helper(String *result_hexal_variant,
 	//printf("%c\n", character);
 
 	if (character == 'R') {
-		line->content[i] = '\t';
+		line->content[i] = ISSPACE_DUMMY;
 		if (parse_first_3_lines_helper(result_R_variant, line, line_number, MIN_NUMBER_FOURTH_LINE)) {
-			if (result_R_variant->array[2] == 0 || result_R_variant->size != 5) {
+			bool is_R_line_condition_fullfilled = 
+			result_R_variant->array[2] == 0 || result_R_variant->size != 5;
+			if (!is_R_line_condition_fullfilled) {
 				handle_wrong_input(line_number);
 
 				return false;
@@ -255,11 +257,10 @@ bool parse_fourth_line(Labyrinth *labyrinth, const Line *line, const size_t line
 		return false;
 	}
 
-	labyrinth->walls.array = calloc_wraper(labyrinth->block_count, sizeof(bool));
-	labyrinth->walls.allocated_size = labyrinth->block_count;
+	labyrinth->walls.array = calloc_wraper(back_num_array(&labyrinth->partial_array), sizeof(bool));
+	labyrinth->walls.allocated_size = back_num_array(&labyrinth->partial_array);
 
 	if (result_hexal_variant.size == 0) {
-		labyrinth->is_hexal_version = false;
 		get_walls_r_version(labyrinth, &result_R_variant, &labyrinth->walls);
 	} else {
 		insert_str(&result_hexal_variant, NULL_CHAR, result_hexal_variant.size);
@@ -267,7 +268,7 @@ bool parse_fourth_line(Labyrinth *labyrinth, const Line *line, const size_t line
 		--result_hexal_variant.size;
 
 		//todo this is wrong
-		if ((4 * result_hexal_variant.size) - 1 > labyrinth->block_count) {
+		if ((4 * result_hexal_variant.size) - 1 > back_num_array(&labyrinth->partial_array)) {
 			handle_wrong_input(line_number);
 			free_numbers_array(&result_R_variant);
 			free_string(&result_hexal_variant);
@@ -275,9 +276,8 @@ bool parse_fourth_line(Labyrinth *labyrinth, const Line *line, const size_t line
 			return false;
 		}
 
-		labyrinth->is_hexal_version = true;
 		hexal_to_reverse_binary(&result_hexal_variant, &labyrinth->walls);
-		labyrinth->walls.size = labyrinth->block_count;
+		labyrinth->walls.size = back_num_array(&labyrinth->partial_array);
 	}
 
 	free_numbers_array(&result_R_variant);

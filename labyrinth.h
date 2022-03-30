@@ -12,10 +12,7 @@ typedef struct Labyrinth {
 	NumbersArray dimensions;
 	NumbersArray partial_array;
 	BoolArray walls;
-	size_t block_count;
 	size_t start, finish;
-	bool is_hexal_version;
-
 } Labyrinth;
 
 void init_labyrinth(Labyrinth *labyrinth, size_t alloc_size);

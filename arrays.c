@@ -78,6 +78,6 @@ void calculate_partial_products(NumbersArray *array, NumbersArray *result, bool 
 
 }
 
-size_t back_num_array(NumbersArray *array) {
+size_t back_num_array(const NumbersArray *array) {
 	return array->array[array->size - 1];
 }

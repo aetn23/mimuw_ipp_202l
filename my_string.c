@@ -69,10 +69,10 @@ void clear_str(String *str) {
 	str->size = 0;
 }
 
-size_t str_to_size_t(const String *str, const size_t base) {
+size_t str_to_size_t(const String *str) {
 	char *str_end;
 
-	return strtoull(str->content, &str_end, base);
+	return strtoull(str->content, &str_end, BASE_TEN);
 }
 
 void hexal_to_reverse_binary(String *str, BoolArray *result) {
