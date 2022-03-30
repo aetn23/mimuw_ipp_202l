@@ -34,4 +34,6 @@ void calculate_partial_products(NumbersArray *array, NumbersArray *result, bool 
 
 size_t back_num_array(const NumbersArray *array);
 
+bool is_array_greater (const NumbersArray *array1, const NumbersArray *array2);
+
 #endif //_ARRAYS_

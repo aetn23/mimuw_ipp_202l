@@ -81,3 +81,13 @@ void calculate_partial_products(NumbersArray *array, NumbersArray *result, bool 
 size_t back_num_array(const NumbersArray *array) {
 	return array->array[array->size - 1];
 }
+
+
+// Greater in the sense that every element of first array is greater than correspodnig element in second one. This function assumes the arrays are of equal length.
+bool is_array_greater (const NumbersArray *array1, const NumbersArray *array2) {
+	for (size_t i = 0; i < array1->size; i++) {
+		if (array2->array[i] > array1->array[i])
+			return false;
+	}
+	return true;
+}
