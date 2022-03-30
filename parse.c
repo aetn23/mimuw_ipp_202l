@@ -79,7 +79,7 @@ void get_walls_r_version(const Labyrinth *labyrinth, const NumbersArray *R_line,
 }
 
 bool parse_number(NumbersArray *numbers, const Line *line, 
-				const size_t min_number_allowed,
+				const size_t min_number_allowed, const size_t max_number_allowed,
 				 String *number_as_string, size_t *i) {
 	char character;
 
@@ -93,7 +93,7 @@ bool parse_number(NumbersArray *numbers, const Line *line,
 			size_t number = str_to_size_t(number_as_string);
 			push_back_number(numbers, number);
 
-			if (errno == ERANGE || number < min_number_allowed)
+			if (errno == ERANGE || number < min_number_allowed || number >= max_number_allowed)
 				return false;
 
 			clear_str(number_as_string);
@@ -110,7 +110,7 @@ bool parse_number(NumbersArray *numbers, const Line *line,
 
 bool parse_first_3_lines_helper(NumbersArray *numbers, const Line *line,
                                 const size_t line_number,
-								const size_t min_number_allowed) {
+								const size_t min_number_allowed, const size_t max_number_allowed) {
 	size_t i = 0;
 	String number_as_string;
 	init_string(&number_as_string, START_ARRAY_SIZE);
@@ -124,7 +124,7 @@ bool parse_first_3_lines_helper(NumbersArray *numbers, const Line *line,
 		char character = line->content[i];
 
 		if ((!isdigit(character) || !parse_number(numbers, line, 
-													min_number_allowed,
+													min_number_allowed, max_number_allowed,
 													 &number_as_string, &i))) {
 			handle_wrong_input(line_number);
 
@@ -144,7 +144,7 @@ bool parse_first_3_lines(Labyrinth *labyrinth, const Line *line, const size_t li
 	init_numbers_array(&numbers, START_ARRAY_SIZE);
 	bool success = true;
 
-	if (!parse_first_3_lines_helper(&numbers, line, line_number, MIN_NUMBER_FIRST_3_LINES)) {
+	if (!parse_first_3_lines_helper(&numbers, line, line_number, MIN_NUMBER_FIRST_3_LINES, SIZE_MAX)) {
 		free_numbers_array(&numbers);
 		return false;
 	}
@@ -202,11 +202,12 @@ bool parse_fourth_line_helper(String *result_hexal_variant,
 
 	if (character == 'R') {
 		line->content[i] = ISSPACE_DUMMY;
-		if (parse_first_3_lines_helper(result_R_variant, line, line_number, MIN_NUMBER_FOURTH_LINE)) {
-			bool is_R_line_condition_fullfilled = 
+		if (parse_first_3_lines_helper(result_R_variant, line, line_number, MIN_NUMBER_FOURTH_LINE, UINT32_MAX)) {
+			bool is_R_line_condition_failed = 
 			result_R_variant->array[2] == 0 || result_R_variant->size != 5;
 
-			if (!is_R_line_condition_fullfilled) {
+			if (is_R_line_condition_failed) {
+				//printf("TUTAJ\n\n");
 				handle_wrong_input(line_number);
 
 				return false;
@@ -273,7 +274,7 @@ bool parse_fourth_line(Labyrinth *labyrinth, const Line *line, const size_t line
 
 		hexal_to_reverse_binary(&result_hexal_variant, &labyrinth->walls);
 		//printf("%zu\n", labyrinth->walls.size);
-		if (labyrinth->walls.size - 1 >= back_num_array(&labyrinth->partial_array)) {
+		if (labyrinth->walls.size > back_num_array(&labyrinth->partial_array)) {
 			handle_wrong_input(line_number);
 			free_numbers_array(&result_R_variant);
 			free_string(&result_hexal_variant);
