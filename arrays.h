@@ -32,6 +32,8 @@ size_t array_product(const NumbersArray *array, bool *overflow, size_t begin, si
 
 void printf_array(NumbersArray *array);
 
-void calculate_partial_sums(NumbersArray *array, NumbersArray *result);
+void calculate_partial_products(NumbersArray *array, NumbersArray *result, bool *overflow);
+
+size_t back_num_array(NumbersArray *array);
 
 #endif //_ARRAYS_

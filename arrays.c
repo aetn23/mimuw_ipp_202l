@@ -82,9 +82,20 @@ void printf_bool_array(BoolArray *array) {
 	printf("\n");
 }
 
-void calculate_partial_sums(NumbersArray *array, NumbersArray *result) {
+void calculate_partial_products(NumbersArray *array, NumbersArray *result, bool *overflow) {
 	push_back_number(result, 1);
-	for (size_t i = 1; i < array->size + 1; i++)
+	for (size_t i = 1; i < array->size + 1; i++) {
+		if (result->array[i-1] > SIZE_MAX && array->array[i-1]) {
+			*overflow = true;
+			return;
+		} else {
 		push_back_number(result, result->array[i - 1] * array->array[i - 1]);
+		*overflow = false;
+		}
+	}
 
+}
+
+size_t back_num_array(NumbersArray *array) {
+	return array->array[array->size - 1];
 }

@@ -16,9 +16,12 @@
 #include "error_handling.h"
 
 #define TWO_TO_THRITYTWO 4294967296UL
+
 #define MIN_NUMBER_FIRST_3_LINES 1
 #define MIN_NUMBER_FOURTH_LINE 0
 #define MAX_NUM_LINES 4
+
+#define NULL_CHAR '\0'
 
 Line read_line() {
 	Line line;
@@ -38,16 +41,15 @@ Line read_line() {
 	return line;
 }
 
-size_t get_first_nonspace_location(Line *line, size_t i) {
+size_t get_first_nonspace_location(const Line *line, size_t i) {
 	for (; i < line->size; i++)
 		if (!isspace(line->content[i]))
 			return i--;
 	return i;
 }
 
-
-
-void get_walls_r_version(Labyrinth *labyrinth, NumbersArray *R_line, BoolArray *result) {
+// Variabales are named after formula in task's description.
+void get_walls_r_version(const Labyrinth *labyrinth, const NumbersArray *R_line, BoolArray *result) {
 	size_t a = R_line->array[0], b = R_line->array[1], m = R_line->array[2],
 					r = R_line->array[3], s_0 = R_line->array[4], s_i = s_0;
 
@@ -61,6 +63,7 @@ void get_walls_r_version(Labyrinth *labyrinth, NumbersArray *R_line, BoolArray *
 		push_back_number(&w_numbers, s_i % labyrinth->partial_array.array[labyrinth->partial_array.size - 1]);
 	}
 
+	// Fill walls array with walls postitions.
 	for (i = 0; i < w_numbers.size; i++) {
 		while (w_numbers.array[i] < labyrinth->block_count) {
 			result->array[w_numbers.array[i]] = true;
@@ -73,7 +76,9 @@ void get_walls_r_version(Labyrinth *labyrinth, NumbersArray *R_line, BoolArray *
 	free_numbers_array(&w_numbers);
 }
 
-bool parse_number(NumbersArray *numbers, Line *line, size_t min_number_allowed, String *number_as_string, size_t *i) {
+bool parse_number(NumbersArray *numbers, const Line *line, 
+				const size_t min_number_allowed,
+				 String *number_as_string, size_t *i) {
 	char character;
 
 	for (; *i < line->size; (*i)++) {
@@ -81,7 +86,7 @@ bool parse_number(NumbersArray *numbers, Line *line, size_t min_number_allowed, 
 
 
 		if (isspace(character)) {
-			insert_str(number_as_string, '\0', number_as_string->size);
+			insert_str(number_as_string, NULL_CHAR, number_as_string->size);
 
 			size_t number = str_to_size_t(number_as_string);
 			push_back_number(numbers, number);
@@ -99,10 +104,10 @@ bool parse_number(NumbersArray *numbers, Line *line, size_t min_number_allowed, 
 	return true;
 }
 
-
-//todo add check if star coordinates lesser than dimensions
-bool parse_first_3_lines_helper(Labyrinth *labyrinth, NumbersArray *numbers, Line *line,
-                                size_t line_number, size_t min_number_allowed) {
+//todo add check if start coordinates lesser than dimensions
+bool parse_first_3_lines_helper(NumbersArray *numbers, const Line *line,
+                                const size_t line_number,
+								const size_t min_number_allowed) {
 	size_t i = 0;
 	String number_as_string;
 	init_string(&number_as_string, START_ARRAY_SIZE);
@@ -115,7 +120,9 @@ bool parse_first_3_lines_helper(Labyrinth *labyrinth, NumbersArray *numbers, Lin
 
 		char character = line->content[i];
 
-		if ((!isdigit(character) || !parse_number(numbers, line, min_number_allowed, &number_as_string, &i))) {
+		if ((!isdigit(character) || !parse_number(numbers, line, 
+													min_number_allowed,
+													 &number_as_string, &i))) {
 			handle_wrong_input(line_number);
 
 			free_string(&number_as_string);
@@ -129,19 +136,21 @@ bool parse_first_3_lines_helper(Labyrinth *labyrinth, NumbersArray *numbers, Lin
 	return true;
 }
 
-bool parse_first_3_lines(Labyrinth *labyrinth, Line *line, size_t line_number) {
+bool parse_first_3_lines(Labyrinth *labyrinth, const Line *line, const size_t line_number) {
 	NumbersArray numbers;
 	init_numbers_array(&numbers, START_ARRAY_SIZE);
 
-	if (!parse_first_3_lines_helper(labyrinth, &numbers, line, line_number, MIN_NUMBER_FIRST_3_LINES)) {
+	if (!parse_first_3_lines_helper(&numbers, line, line_number, MIN_NUMBER_FIRST_3_LINES)) {
 		free_numbers_array(&numbers);
 		return false;
 	}
 
 	if (line_number == 1) {
+		labyrinth->dimensions = numbers;
 		bool overflow = false;
-		labyrinth->block_count = array_product(&numbers,
-		                                       &overflow, 0, numbers.size);
+
+		calculate_partial_products(&labyrinth->dimensions, &labyrinth->partial_array, &overflow);
+		
 		if (overflow) {
 			free_numbers_array(&numbers);
 			handle_wrong_input(line_number);
@@ -149,9 +158,7 @@ bool parse_first_3_lines(Labyrinth *labyrinth, Line *line, size_t line_number) {
 			return false;
 		}
 
-		labyrinth->dimensions = numbers;
-
-		calculate_partial_sums(&labyrinth->dimensions, &labyrinth->partial_array);
+		labyrinth->block_count = labyrinth->partial_array.array[labyrinth->partial_array.size - 1];
 	} else if (numbers.size != labyrinth->dimensions.size) {
 		free_numbers_array(&numbers);
 		handle_wrong_input(line_number);
@@ -172,7 +179,7 @@ bool parse_first_3_lines(Labyrinth *labyrinth, Line *line, size_t line_number) {
 	return true;
 }
 
-bool parse_fourth_line_helper(Labyrinth *labyrinth, String *result_hexal_variant,
+bool parse_fourth_line_helper(String *result_hexal_variant,
                               NumbersArray *result_R_variant, Line *line,
                               size_t line_number) {
 	size_t i = 0;
@@ -195,7 +202,7 @@ bool parse_fourth_line_helper(Labyrinth *labyrinth, String *result_hexal_variant
 
 	if (character == 'R') {
 		line->content[i] = '\t';
-		if (parse_first_3_lines_helper(labyrinth, result_R_variant, line, line_number, MIN_NUMBER_FOURTH_LINE)) {
+		if (parse_first_3_lines_helper(result_R_variant, line, line_number, MIN_NUMBER_FOURTH_LINE)) {
 			if (result_R_variant->array[2] == 0 || result_R_variant->size != 5) {
 				handle_wrong_input(line_number);
 
@@ -241,7 +248,7 @@ bool parse_fourth_line(Labyrinth *labyrinth, Line *line, size_t line_number) {
 	NumbersArray result_R_variant;
 	init_numbers_array(&result_R_variant, START_ARRAY_SIZE);
 
-	if (!parse_fourth_line_helper(labyrinth, &result_hexal_variant, &result_R_variant, line,
+	if (!parse_fourth_line_helper(&result_hexal_variant, &result_R_variant, line,
 	                              line_number)) {
 		free_string(&result_hexal_variant);
 		free_numbers_array(&result_R_variant);
