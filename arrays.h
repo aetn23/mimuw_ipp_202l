@@ -19,6 +19,12 @@ typedef struct NumbersArray {
 	size_t allocated_size;
 } NumbersArray;
 
+typedef struct BitArray {
+	size_t *array;
+	size_t size;
+	size_t allocated_size;
+} BitArray;
+
 
 void init_numbers_array(NumbersArray *num_array, size_t alloc_size);
 
@@ -35,5 +41,11 @@ void calculate_partial_products(NumbersArray *array, NumbersArray *result, bool 
 size_t back_num_array(const NumbersArray *array);
 
 bool is_array_greater (const NumbersArray *array1, const NumbersArray *array2);
+
+void toggle_bit (NumbersArray *bit_array, size_t position);
+
+void init_bit_array(NumbersArray *bit_array, size_t size);
+
+bool read_bit (NumbersArray *bit_array, size_t position);
 
 #endif //_ARRAYS_

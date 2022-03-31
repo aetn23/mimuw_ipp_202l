@@ -3,6 +3,8 @@
 #include "arrays.h"
 #include "memory_managment.h"
 
+#define SIZE_T_SIZE_IN_BITS (sizeof(size_t) * 8)
+
 void init_bool_array(BoolArray *bool_array, const size_t size) {
 	if (size != 0) {
 		bool_array->array = malloc(size * sizeof(bool));
@@ -90,4 +92,44 @@ bool is_array_greater (const NumbersArray *array1, const NumbersArray *array2) {
 			return false;
 	}
 	return true;
+}
+
+// Asumption: arguments are correct in the sense that bit_index will always be within
+// the bounds of allocated memory. 
+void toggle_bit (NumbersArray *bit_array, size_t position) {
+	while (bit_array->allocated_size <= position) {
+		bit_array->array = realloc_wrapper(bit_array->array,
+											REALLOC_MULTIPLIER * bit_array->allocated_size * sizeof(size_t));
+		bit_array->allocated_size = REALLOC_MULTIPLIER * bit_array->allocated_size * SIZE_T_SIZE_IN_BITS;
+	}
+
+	size_t bit_index = position / SIZE_T_SIZE_IN_BITS;
+	size_t bit_position = position % SIZE_T_SIZE_IN_BITS;
+
+	size_t one_at_bit_position = 1 << bit_position;
+
+	bit_array->array[bit_index] |= one_at_bit_position;
+
+	bit_array->size++;
+}
+
+bool read_bit (NumbersArray *bit_array, size_t position) {
+	size_t bit_index = position / SIZE_T_SIZE_IN_BITS;
+	size_t bit_position = position % SIZE_T_SIZE_IN_BITS;
+
+	size_t one_at_bit_position = 1 << bit_position;
+
+	return (bool)(bit_array->array[bit_index] & one_at_bit_position);
+}
+
+void init_bit_array(NumbersArray *bit_array, size_t alloc_size) {
+	if (alloc_size > 0) {
+		bit_array->array = calloc_wraper(alloc_size, sizeof(size_t));
+		bit_array->size = 0;
+		bit_array->allocated_size = alloc_size * SIZE_T_SIZE_IN_BITS;
+	} else {
+		bit_array->array = NULL;
+		bit_array->size = 0;
+		bit_array->allocated_size = 0;
+	}
 }

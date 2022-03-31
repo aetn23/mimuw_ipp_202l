@@ -8,7 +8,7 @@
 int main() {
 	Labyrinth labyrinth;
 	init_labyrinth(&labyrinth, START_ARRAY_SIZE);
-	bool good_indput = parse(&labyrinth);
+	bool good_indput = false;//parse(&labyrinth);
 /*
 	for(size_t i = 0; i < 20; i++)
 		printf("%zu: %d\n", i, is_wall(i, &labyrinth));*/
@@ -29,6 +29,22 @@ int main() {
 		}
 	}
 	free_labyrinth(&labyrinth);
+
+	NumbersArray bit_array;
+	init_bit_array(&bit_array, START_ARRAY_SIZE);
+	toggle_bit(&bit_array, 0);
+	toggle_bit(&bit_array, 0);
+	toggle_bit(&bit_array, 80);
+	toggle_bit(&bit_array, 5);
+	toggle_bit(&bit_array, 10);
+
+	printf("%d\n\n", read_bit(&bit_array, 80));
+	printf("%d\n\n", read_bit(&bit_array, 5));
+	printf("%d\n\n", read_bit(&bit_array, 10));
+	printf("%d\n\n", read_bit(&bit_array, 4));
+	printf("%d\n\n", read_bit(&bit_array, 0));
+
+	free_numbers_array(&bit_array);
 
 	return 0;
 }
