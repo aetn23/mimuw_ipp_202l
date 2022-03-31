@@ -5,6 +5,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+#define SIZE_T_SIZE_IN_BITS (sizeof(size_t) * 8)
+
 //There is no need to reallocate this array, since its size is constant after
 //the data has been parsed.
 typedef struct BoolArray {

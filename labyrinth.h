@@ -11,7 +11,7 @@
 typedef struct Labyrinth {
 	NumbersArray dimensions;
 	NumbersArray partial_array;
-	BoolArray walls;
+	NumbersArray walls;
 	size_t start, finish;
 } Labyrinth;
 

@@ -45,7 +45,7 @@ void free_string(String *str) {
 
 void free_labyrinth(Labyrinth *labyrinth) {
 	if (labyrinth->walls.array != NULL)
-		free_bool_array(&labyrinth->walls);
+		free_numbers_array(&labyrinth->walls);
 	if (labyrinth->dimensions.array != NULL)
 		free_numbers_array(&labyrinth->dimensions);
 	if (labyrinth->partial_array.array != NULL)

@@ -51,7 +51,7 @@ size_t get_first_nonspace_location(const Line *line, size_t i) {
 }
 
 // Variabales are named after formula in task's description.
-void get_walls_r_version(const Labyrinth *labyrinth, const NumbersArray *R_line, BoolArray *walls) {
+void get_walls_r_version(const Labyrinth *labyrinth, const NumbersArray *R_line, NumbersArray *walls) {
 	size_t a = R_line->array[0], b = R_line->array[1], m = R_line->array[2],
 					r = R_line->array[3], s_0 = R_line->array[4], s_i = s_0;
 
@@ -68,7 +68,8 @@ void get_walls_r_version(const Labyrinth *labyrinth, const NumbersArray *R_line,
 	// Fill walls array with walls.
 	for (i = 0; i < w_numbers.size; i++) {
 		while (w_numbers.array[i] < back_num_array(&labyrinth->partial_array)) {
-			walls->array[w_numbers.array[i]] = WALL;
+			toggle_bit(walls, w_numbers.array[i]);
+			//walls->array[w_numbers.array[i]] = WALL;
 			if (w_numbers.array[i] > SIZE_MAX - TWO_TO_THRITYTWO)
 				break;
 			else
@@ -78,9 +79,9 @@ void get_walls_r_version(const Labyrinth *labyrinth, const NumbersArray *R_line,
 	free_numbers_array(&w_numbers);
 }
 
-bool parse_number(NumbersArray *numbers, const Line *line, 
-				const size_t min_number_allowed, const size_t max_number_allowed,
-				 String *number_as_string, size_t *i) {
+bool parse_number(NumbersArray *numbers, const Line *line,
+                  const size_t min_number_allowed, const size_t max_number_allowed,
+                  String *number_as_string, size_t *i) {
 	char character;
 
 	for (; *i < line->size; (*i)++) {
@@ -99,7 +100,7 @@ bool parse_number(NumbersArray *numbers, const Line *line,
 			clear_str(number_as_string);
 
 			return true;
-		} else if (isxdigit(character)){
+		} else if (isxdigit(character)) {
 			insert_str(number_as_string, character, number_as_string->size);
 		} else {
 			return false;
@@ -110,7 +111,7 @@ bool parse_number(NumbersArray *numbers, const Line *line,
 
 bool parse_first_3_lines_helper(NumbersArray *numbers, const Line *line,
                                 const size_t line_number,
-								const size_t min_number_allowed, const size_t max_number_allowed) {
+                                const size_t min_number_allowed, const size_t max_number_allowed) {
 	size_t i = 0;
 	String number_as_string;
 	init_string(&number_as_string, START_ARRAY_SIZE);
@@ -123,9 +124,9 @@ bool parse_first_3_lines_helper(NumbersArray *numbers, const Line *line,
 
 		char character = line->content[i];
 
-		if ((!isdigit(character) || !parse_number(numbers, line, 
-													min_number_allowed, max_number_allowed,
-													 &number_as_string, &i))) {
+		if ((!isdigit(character) || !parse_number(numbers, line,
+		                                          min_number_allowed, max_number_allowed,
+		                                          &number_as_string, &i))) {
 			handle_wrong_input(line_number);
 
 			free_string(&number_as_string);
@@ -154,7 +155,7 @@ bool parse_first_3_lines(Labyrinth *labyrinth, const Line *line, const size_t li
 		bool overflow = false;
 
 		calculate_partial_products(&labyrinth->dimensions, &labyrinth->partial_array, &overflow);
-		
+
 		if (overflow) {
 			handle_wrong_input(line_number);
 
@@ -203,8 +204,8 @@ bool parse_fourth_line_helper(String *result_hexal_variant,
 	if (character == 'R') {
 		line->content[i] = ISSPACE_DUMMY;
 		if (parse_first_3_lines_helper(result_R_variant, line, line_number, MIN_NUMBER_FOURTH_LINE, UINT32_MAX)) {
-			bool is_R_line_condition_failed = 
-			result_R_variant->array[2] == 0 || result_R_variant->size != 5;
+			bool is_R_line_condition_failed =
+							result_R_variant->array[2] == 0 || result_R_variant->size != 5;
 
 			if (is_R_line_condition_failed) {
 				//printf("TUTAJ\n\n");
@@ -261,8 +262,7 @@ bool parse_fourth_line(Labyrinth *labyrinth, const Line *line, const size_t line
 		return false;
 	}
 
-	labyrinth->walls.array = calloc_wraper(back_num_array(&labyrinth->partial_array), sizeof(bool));
-	labyrinth->walls.allocated_size = back_num_array(&labyrinth->partial_array);
+	init_bit_array(&labyrinth->walls, (back_num_array(&labyrinth->partial_array) / SIZE_T_SIZE_IN_BITS) + 1);
 
 	if (result_hexal_variant.size == 0) {
 		get_walls_r_version(labyrinth, &result_R_variant, &labyrinth->walls);
@@ -298,6 +298,9 @@ bool parse(Labyrinth *labyrinth) {
 
 	while (true) {
 		line = read_line();
+		if (lines_count == 5) {
+			break;
+		}
 
 		if (!line.state && lines_count == MAX_NUM_LINES + 1 && line.size == 0) {
 			break;

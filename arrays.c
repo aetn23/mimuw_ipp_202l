@@ -3,7 +3,7 @@
 #include "arrays.h"
 #include "memory_managment.h"
 
-#define SIZE_T_SIZE_IN_BITS (sizeof(size_t) * 8)
+
 
 void init_bool_array(BoolArray *bool_array, const size_t size) {
 	if (size != 0) {
@@ -106,9 +106,10 @@ void toggle_bit (NumbersArray *bit_array, size_t position) {
 	size_t bit_index = position / SIZE_T_SIZE_IN_BITS;
 	size_t bit_position = position % SIZE_T_SIZE_IN_BITS;
 
-	size_t one_at_bit_position = 1 << bit_position;
+	size_t one_at_bit_position = (size_t)1 << bit_position;
 
 	bit_array->array[bit_index] |= one_at_bit_position;
+	//printf("TEST: %d\n", read_bit(bit_array, position));
 
 	bit_array->size++;
 }
@@ -117,9 +118,9 @@ bool read_bit (NumbersArray *bit_array, size_t position) {
 	size_t bit_index = position / SIZE_T_SIZE_IN_BITS;
 	size_t bit_position = position % SIZE_T_SIZE_IN_BITS;
 
-	size_t one_at_bit_position = 1 << bit_position;
+	size_t one_at_bit_position = (size_t)1 << bit_position;
 
-	return (bool)(bit_array->array[bit_index] & one_at_bit_position);
+	return ((bit_array->array[bit_index] & one_at_bit_position) != 0);
 }
 
 void init_bit_array(NumbersArray *bit_array, size_t alloc_size) {

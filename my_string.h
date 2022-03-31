@@ -32,7 +32,7 @@ void insert_line(Line *line, char to_insert, size_t location);
 
 void clear_str(String *str);
 
-void hexal_to_reverse_binary(String *str, BoolArray *result);
+void hexal_to_reverse_binary(String *str, NumbersArray *result);
 
 size_t str_to_size_t(const String *str);
 
