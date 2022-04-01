@@ -1,13 +1,12 @@
 #include "queue.h"
 
-void init_fifo(NumFIFO *fifo, size_t alloc_size) {
+void init_fifo(NumFIFO *fifo, const size_t alloc_size) {
 	init_numbers_array(&fifo->array, alloc_size);
 	fifo->first_pos = 0;
 }
 
 void enqueue(NumFIFO *fifo, const size_t value) {
 	push_back_number(&fifo->array, value);
-
 }
 
 //todo implement shrinking after first_pos > constant

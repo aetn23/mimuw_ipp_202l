@@ -273,7 +273,7 @@ bool parse_fourth_line(Labyrinth *labyrinth, const Line *line, const size_t line
 
 		//printf("%s\n", result_hexal_variant.content);
 		//printf("%zu\n", labyrinth->walls.size);
-		hexal_to_reverse_binary(&result_hexal_variant, &labyrinth->walls);
+		get_walls_hexal_ver(&result_hexal_variant, &labyrinth->walls);
 		//printf("%zu\n", labyrinth->walls.size);
 		if (labyrinth->walls.size  > back_num_array(&labyrinth->partial_array)) {
 			handle_wrong_input(line_number);
