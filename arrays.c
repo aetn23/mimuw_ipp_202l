@@ -3,18 +3,7 @@
 #include "arrays.h"
 #include "memory_managment.h"
 
-void push_back_number(NumbersArray *num_array, const size_t number) {
-	if (num_array->allocated_size == num_array->size) {
-		num_array->array = realloc_wrapper(num_array->array,
-		                                   REALLOC_MULTIPLIER * num_array->allocated_size * sizeof(size_t));
-		num_array->allocated_size = REALLOC_MULTIPLIER * num_array->allocated_size;
-	}
-
-	num_array->array[num_array->size] = number;
-	num_array->size++;
-}
-
-void init_numbers_array(NumbersArray *num_array, size_t alloc_size) {
+void init_numbers_array(NumbersArray *num_array, const size_t alloc_size) {
 	if (alloc_size > 0) {
 		num_array->array = malloc_wrapper(alloc_size * sizeof(size_t));
 		num_array->size = 0;
@@ -26,17 +15,22 @@ void init_numbers_array(NumbersArray *num_array, size_t alloc_size) {
 	}
 }
 
-void printf_array(NumbersArray *array) {
-	for (size_t i = 0; i < array->size; i++) {
-		printf("%zu,", array->array[i]);
+void push_back_number(NumbersArray *num_array, const size_t number) {
+	if (num_array->allocated_size == num_array->size) {
+		num_array->allocated_size *= REALLOC_MULTIPLIER;
+		num_array->array = realloc_wrapper(num_array->array,
+		                                   num_array->allocated_size * sizeof(size_t));
 	}
-	printf("\n");
+
+	num_array->array[num_array->size] = number;
+	num_array->size++;
 }
 
-void calculate_partial_products(NumbersArray *array, NumbersArray *result, bool *overflow) {
+void calculate_partial_products(const NumbersArray *array, NumbersArray *result, bool *overflow) {
 	push_back_number(result, 1);
 	for (size_t i = 1; i < array->size + 1; i++) {
-		if (result->array[i-1] > SIZE_MAX / array->array[i-1] && array->array[i-1]) {
+		bool is_next_multiplication_overflowing = result->array[i-1] > SIZE_MAX / array->array[i-1] && array->array[i-1];
+		if (is_next_multiplication_overflowing) {
 			*overflow = true;
 			return;
 		} else {
@@ -51,7 +45,6 @@ size_t back_num_array(const NumbersArray *array) {
 	return array->array[array->size - 1];
 }
 
-
 // Greater in the sense that every element of first array is greater than correspodnig element in second one. This function assumes the arrays are of equal length.
 bool is_array_greater (const NumbersArray *array1, const NumbersArray *array2) {
 	for (size_t i = 0; i < array1->size; i++) {
@@ -61,9 +54,19 @@ bool is_array_greater (const NumbersArray *array1, const NumbersArray *array2) {
 	return true;
 }
 
-// Asumption: arguments are correct in the sense that bit_index will always be within
-// the bounds of allocated memory. 
-void toggle_bit (NumbersArray *bit_array, size_t position) {
+void init_bit_array(NumbersArray *bit_array, const size_t alloc_size) {
+	if (alloc_size > 0) {
+		bit_array->array = calloc_wraper(alloc_size, sizeof(size_t));
+		bit_array->size = 0;
+		bit_array->allocated_size = alloc_size * SIZE_T_SIZE_IN_BITS;
+	} else {
+		bit_array->array = NULL;
+		bit_array->size = 0;
+		bit_array->allocated_size = 0;
+	}
+}
+
+void toggle_bit (NumbersArray *bit_array, const size_t position) {
 	while (bit_array->allocated_size <= position) {
 		bit_array->array = realloc_wrapper(bit_array->array,
 											REALLOC_MULTIPLIER * bit_array->allocated_size * sizeof(size_t));
@@ -76,28 +79,15 @@ void toggle_bit (NumbersArray *bit_array, size_t position) {
 	size_t one_at_bit_position = (size_t)1 << bit_position;
 
 	bit_array->array[bit_index] |= one_at_bit_position;
-	//printf("TEST: %d\n", read_bit(bit_array, position));
 
 	bit_array->size++;
 }
 
-bool read_bit (NumbersArray *bit_array, size_t position) {
+bool read_bit (const NumbersArray *bit_array, const size_t position) {
 	size_t bit_index = position / SIZE_T_SIZE_IN_BITS;
 	size_t bit_position = position % SIZE_T_SIZE_IN_BITS;
 
 	size_t one_at_bit_position = (size_t)1 << bit_position;
 
 	return ((bit_array->array[bit_index] & one_at_bit_position) != 0);
-}
-
-void init_bit_array(NumbersArray *bit_array, size_t alloc_size) {
-	if (alloc_size > 0) {
-		bit_array->array = calloc_wraper(alloc_size, sizeof(size_t));
-		bit_array->size = 0;
-		bit_array->allocated_size = alloc_size * SIZE_T_SIZE_IN_BITS;
-	} else {
-		bit_array->array = NULL;
-		bit_array->size = 0;
-		bit_array->allocated_size = 0;
-	}
 }

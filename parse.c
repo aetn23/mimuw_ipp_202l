@@ -284,10 +284,10 @@ bool parse_fourth_line(Labyrinth *labyrinth, const Line *line, const size_t line
 	}
 
 	if (success && (is_wall(labyrinth->start, labyrinth))) {
-		handle_wrong_input(2);
+		handle_wrong_input(4);
 		success = false;
 	} else if (success && (is_wall(labyrinth->finish, labyrinth))) {
-		handle_wrong_input(3);
+		handle_wrong_input(4);
 		success = false;
 	}
 
