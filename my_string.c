@@ -2,13 +2,13 @@
 
 #include "my_string.h"
 #include "memory_managment.h"
-#include "common_defines.h"
 
 #define HEXAl_AS_BIN_SIZE 4
-
 #define BASE_TWO 2
+#define BASE_TEN 10
+#define BASE_SIXTEEN 16
 
-void init_string(String *str, size_t size) {
+void init_string(String *str, const size_t size) {
 	if (size != 0) {
 		str->content = malloc_wrapper(sizeof(char) * START_ARRAY_SIZE);
 		check_alloc(str->content);

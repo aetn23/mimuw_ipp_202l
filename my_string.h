@@ -6,6 +6,8 @@
 
 #include "arrays.h"
 
+#define NULL_CHAR '\0'
+
 typedef struct String {
 	char *content;
 	size_t size;

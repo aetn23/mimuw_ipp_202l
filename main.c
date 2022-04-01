@@ -3,18 +3,13 @@
 #include "labyrinth.h"
 #include "parse.h"
 #include "memory_managment.h"
-#include "error_handling.h"
 
 int main() {
 	Labyrinth labyrinth;
 	init_labyrinth(&labyrinth, START_ARRAY_SIZE);
-	bool good_indput = parse(&labyrinth);
-/*
-	for(size_t i = 0; i < 20; i++)
-		printf("%zu: %d\n", i, is_wall(i, &labyrinth));
-	return 0;*/
-	//printf("%s\n", labyrinth.walls_hexal_version.content);
-	if (good_indput) {
+	bool good_input = parse(&labyrinth);
+
+	if (good_input) {
 		if (labyrinth.start == labyrinth.finish) {
 			printf("0\n");
 		} else {
@@ -27,8 +22,6 @@ int main() {
 		}
 	}
 	free_labyrinth(&labyrinth);
-
-
 
 	return 0;
 }

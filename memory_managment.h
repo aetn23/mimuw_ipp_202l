@@ -6,8 +6,7 @@
 #include "labyrinth.h"
 #include "queue.h"
 
-//todo increase
-#define START_ARRAY_SIZE 1
+#define START_ARRAY_SIZE 32
 #define REALLOC_MULTIPLIER 2
 
 void check_alloc(void *pointer);
@@ -16,11 +15,11 @@ void *malloc_wrapper(size_t size);
 
 void *calloc_wraper(size_t num, size_t size);
 
+void *realloc_wrapper(void *ptr, size_t size);
+
 void free_numbers_array(NumbersArray *array);
 
 void free_string(String *str);
-
-void *realloc_wrapper(void *ptr, size_t size);
 
 void free_labyrinth(Labyrinth *labyrinth);
 

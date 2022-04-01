@@ -7,14 +7,14 @@ void check_alloc(void *pointer) {
 		handle_alloc_failure();
 }
 
-void *malloc_wrapper(size_t size) {
+void *malloc_wrapper(const size_t size) {
 	void *result = malloc(size);
 	check_alloc(result);
 
 	return result;
 }
 
-void *calloc_wraper(size_t num, size_t size) {
+void *calloc_wraper(const size_t num, const size_t size) {
 	void *result = calloc(num, size);
 	if (result == NULL)
 		printf("DUPA");
@@ -23,7 +23,7 @@ void *calloc_wraper(size_t num, size_t size) {
 	return result;
 }
 
-void *realloc_wrapper(void *ptr, size_t size) {
+void *realloc_wrapper(void *ptr, const size_t size) {
 	ptr = realloc(ptr, size);
 	check_alloc(ptr);
 

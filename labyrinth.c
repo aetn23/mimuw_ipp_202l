@@ -4,8 +4,7 @@
 #include "memory_managment.h"
 #include "queue.h"
 
-//todo implement shrinking of queue after constant has been reached LEASTEST IMPORTANT
-void init_labyrinth(Labyrinth *labyrinth, size_t alloc_size) {
+void init_labyrinth(Labyrinth *labyrinth, const size_t alloc_size) {
 	init_numbers_array(&labyrinth->dimensions, 0);
 	init_numbers_array(&labyrinth->partial_array, alloc_size);
 	init_bit_array(&labyrinth->walls, 0);
@@ -13,7 +12,7 @@ void init_labyrinth(Labyrinth *labyrinth, size_t alloc_size) {
 	labyrinth->finish = 0;
 }
 
-//todo describe what is happening
+// This formula is taken directly from the task's description.
 size_t array_rep_to_number_rep(const NumbersArray *array, const Labyrinth *labyrinth) {
 	size_t result = 0;
 
@@ -24,46 +23,46 @@ size_t array_rep_to_number_rep(const NumbersArray *array, const Labyrinth *labyr
 }
 
 inline bool is_wall(size_t block, Labyrinth *labyrinth) {
-//	if (read_bit(&labyrinth->walls, block))
-	//	printf("WALL: %zu\n", block);
 	return read_bit(&labyrinth->walls, block);
 }
 
-void get_new_neighbours_helper (size_t block, Labyrinth *labyrinth, NumFIFO *result, size_t neighbour, size_t i) {
+void get_new_neighbours_helper(const size_t block, Labyrinth *labyrinth, NumFIFO *result, const size_t neighbour,
+                               const size_t i) {
 	size_t block_i_dimension = block / labyrinth->partial_array.array[i + 1];
 	size_t neigbour_i_dimension = neighbour / labyrinth->partial_array.array[i + 1];
 
-	if (neighbour < back_num_array(&labyrinth->partial_array) && !is_wall(neighbour, labyrinth)
-			&& block_i_dimension == neigbour_i_dimension) {
+	bool is_neighbour_correct = neighbour < back_num_array(&labyrinth->partial_array) && !is_wall(neighbour, labyrinth)
+	                            && block_i_dimension == neigbour_i_dimension;
+	if (is_neighbour_correct) {
 		enqueue(result, neighbour);
 		toggle_bit(&labyrinth->walls, neighbour);
-		//printf(" NEIGHBOUR %zu ", neighbour);
 	}
 }
 
-void get_new_neighbours(size_t block, Labyrinth *labyrinth, NumFIFO *result) {
+void get_new_neighbours(const size_t block, Labyrinth *labyrinth, NumFIFO *result) {
 	size_t i = 0;
 	size_t neighbour;
 
-	//printf("BLOCK %zu: ", block);
 	for (; i < labyrinth->partial_array.size - 1; i++) {
-		//printf("\n%zu\n", i);
-		if (back_num_array(&labyrinth->partial_array) - labyrinth->partial_array.array[i] >=  block ) {
+		bool is_bigger_neighbour_within_bounds =
+						back_num_array(&labyrinth->partial_array) - labyrinth->partial_array.array[i] >= block;
+		bool is_smaller_neighbour_within_bounds = block >= labyrinth->partial_array.array[i];
+
+		if (is_bigger_neighbour_within_bounds) {
 			neighbour = block + labyrinth->partial_array.array[i];
 			get_new_neighbours_helper(block, labyrinth, result, neighbour, i);
 		}
 
-		if (block >= labyrinth->partial_array.array[i]) {
+		if (is_smaller_neighbour_within_bounds) {
 			neighbour = block - labyrinth->partial_array.array[i];
 			get_new_neighbours_helper(block, labyrinth, result, neighbour, i);
 		}
 	}
-	//printf("\n");
 }
 
 //todo describe what is happening
 size_t get_result(Labyrinth *labyrinth) {
-	size_t length = 1;
+	size_t distance = 1;
 	bool found = false;
 
 	NumFIFO queue_0;
@@ -80,9 +79,7 @@ size_t get_result(Labyrinth *labyrinth) {
 
 	size_t block = labyrinth->start;
 
-	//printf("%zu\n\n", labyrinth->walls.size);
 	toggle_bit(&labyrinth->walls, block);
-	//labyrinth->walls.array[block] = true;
 	get_new_neighbours(block, labyrinth, active_queue);
 	while (!(is_empty_queue(&queue_0) && is_empty_queue(&queue_1))) {
 
@@ -91,10 +88,9 @@ size_t get_result(Labyrinth *labyrinth) {
 			active_queue = queue_0_active ? &queue_1 : &queue_0;
 			non_active_queue = queue_0_active ? &queue_0 : &queue_1;
 			queue_0_active = !queue_0_active;
-			length++;
+			distance++;
 			continue;
 		}
-		//printf("block: %zu\n ", block);
 
 		if (block == labyrinth->finish) {
 			found = true;
@@ -108,8 +104,7 @@ size_t get_result(Labyrinth *labyrinth) {
 	free_queue(&queue_1);
 
 	if (found)
-		return length;
+		return distance;
 	else
 		return 0;
 }
-
