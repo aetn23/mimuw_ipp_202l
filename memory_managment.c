@@ -33,11 +33,6 @@ void free_numbers_array(NumbersArray *array) {
 		free(array->array);
 }
 
-void free_bool_array(BoolArray *array) {
-	if (array->array != NULL)
-		free(array->array);
-}
-
 void free_string(String *str) {
 	if (str->content != NULL)
 		free(str->content);

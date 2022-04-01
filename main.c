@@ -15,9 +15,7 @@ int main() {
 	return 0;*/
 	//printf("%s\n", labyrinth.walls_hexal_version.content);
 	if (good_indput) {
-		if (is_wall(labyrinth.finish, &labyrinth) || is_wall(labyrinth.start, &labyrinth))
-			handle_wrong_input(4);
-		else if (labyrinth.start == labyrinth.finish) {
+		if (labyrinth.start == labyrinth.finish) {
 			printf("0\n");
 		} else {
 			size_t result = get_result(&labyrinth);

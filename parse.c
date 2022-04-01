@@ -94,7 +94,7 @@ bool parse_number(NumbersArray *numbers, const Line *line,
 			size_t number = str_to_size_t(number_as_string);
 			push_back_number(numbers, number);
 
-			if (errno == ERANGE || number < min_number_allowed || number >= max_number_allowed)
+			if (errno == ERANGE || number < min_number_allowed || number > max_number_allowed)
 				return false;
 
 			clear_str(number_as_string);
@@ -157,7 +157,7 @@ bool parse_first_3_lines(Labyrinth *labyrinth, const Line *line, const size_t li
 		calculate_partial_products(&labyrinth->dimensions, &labyrinth->partial_array, &overflow);
 
 		if (overflow) {
-			handle_wrong_input(line_number);
+			handle_wrong_input(0);
 
 			success = false;
 		}
@@ -234,7 +234,6 @@ bool parse_fourth_line_helper(String *result_hexal_variant,
 				if (get_first_nonspace_location(line, i) == line->size)
 					break;
 			}
-
 			handle_wrong_input(line_number);
 			return false;
 		}
@@ -254,13 +253,11 @@ bool parse_fourth_line(Labyrinth *labyrinth, const Line *line, const size_t line
 	NumbersArray result_R_variant;
 	init_numbers_array(&result_R_variant, START_ARRAY_SIZE);
 
-	if (!parse_fourth_line_helper(&result_hexal_variant, &result_R_variant, line,
-	                              line_number)) {
-		free_string(&result_hexal_variant);
-		free_numbers_array(&result_R_variant);
+	bool success = true;
 
-		return false;
-	}
+	if (!parse_fourth_line_helper(&result_hexal_variant, &result_R_variant, line,
+	                              line_number))
+		success = false;
 
 	init_bit_array(&labyrinth->walls, (back_num_array(&labyrinth->partial_array) / SIZE_T_SIZE_IN_BITS) + 1);
 
@@ -272,23 +269,28 @@ bool parse_fourth_line(Labyrinth *labyrinth, const Line *line, const size_t line
 		--result_hexal_variant.size;
 
 
-		hexal_to_reverse_binary(&result_hexal_variant, &labyrinth->walls);
+		;
 		//printf("%zu\n", labyrinth->walls.size);
-		if (labyrinth->walls.size > back_num_array(&labyrinth->partial_array)) {
+		if (4 * result_hexal_variant.size - hexal_to_reverse_binary(&result_hexal_variant, &labyrinth->walls) > back_num_array(&labyrinth->partial_array)) {
 			handle_wrong_input(line_number);
-			free_numbers_array(&result_R_variant);
-			free_string(&result_hexal_variant);
-
-			return false;
+			success = false;
 		}
 
 		labyrinth->walls.size = back_num_array(&labyrinth->partial_array);
 	}
 
+	if (success && (is_wall(labyrinth->start, labyrinth))) {
+		handle_wrong_input(2);
+		success = false;
+	} else if (success && (is_wall(labyrinth->finish, labyrinth))) {
+		handle_wrong_input(3);
+		success = false;
+	}
+
 	free_numbers_array(&result_R_variant);
 	free_string(&result_hexal_variant);
 
-	return true;
+	return success;
 }
 
 bool parse(Labyrinth *labyrinth) {
@@ -298,9 +300,7 @@ bool parse(Labyrinth *labyrinth) {
 
 	while (true) {
 		line = read_line();
-		if (lines_count == 5) {
-			break;
-		}
+
 
 		if (!line.state && lines_count == MAX_NUM_LINES + 1 && line.size == 0) {
 			break;

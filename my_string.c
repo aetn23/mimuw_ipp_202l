@@ -74,11 +74,13 @@ size_t str_to_size_t(const String *str) {
 	return strtoull(str->content, &str_end, BASE_TEN);
 }
 
-void hexal_to_reverse_binary(String *str, NumbersArray *result) {
+size_t hexal_to_reverse_binary(String *str, NumbersArray *result) {
 	char *character = malloc(2 * sizeof(char));
 	*(character + 1) = NULL_CHAR;
+
 	size_t distance_since_last_one = 0;
 	size_t position = 0;
+
 	for (size_t i = str->size - 1;; i--) {
 		*character = str->content[i];
 		long number = strtol(character, NULL, BASE_SIXTEEN);
@@ -87,17 +89,16 @@ void hexal_to_reverse_binary(String *str, NumbersArray *result) {
 				distance_since_last_one++;
 			else 
 				distance_since_last_one = 0;
-			//printf("%d", (bool)(number % 2));
 			if (number % BASE_TWO == 1)
 				toggle_bit(result, position);
-			//push_back_bool(result, (bool) (number % BASE_TWO));
 			number /= BASE_TWO;
 			position++;
 		}
 		if (i == 0)
 			break;
 	}
-	result->size -= distance_since_last_one;
 	//printf("\n");
 	free(character);
+	return distance_since_last_one;
+
 }

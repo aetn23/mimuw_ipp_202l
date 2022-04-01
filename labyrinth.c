@@ -30,7 +30,6 @@ inline bool is_wall(size_t block, Labyrinth *labyrinth) {
 }
 
 void get_new_neighbours_helper (size_t block, Labyrinth *labyrinth, NumFIFO *result, size_t neighbour, size_t i) {
-	//todo verify this nameing
 	size_t block_i_dimension = block / labyrinth->partial_array.array[i + 1];
 	size_t neigbour_i_dimension = neighbour / labyrinth->partial_array.array[i + 1];
 
@@ -38,12 +37,11 @@ void get_new_neighbours_helper (size_t block, Labyrinth *labyrinth, NumFIFO *res
 			&& block_i_dimension == neigbour_i_dimension) {
 		enqueue(result, neighbour);
 		toggle_bit(&labyrinth->walls, neighbour);
-		//labyrinth->walls.array[neighbour] = true;
 		//printf(" NEIGHBOUR %zu ", neighbour);
 	}
 }
 
-void new_get_new_neighbours(size_t block, Labyrinth *labyrinth, NumFIFO *result) {
+void get_new_neighbours(size_t block, Labyrinth *labyrinth, NumFIFO *result) {
 	size_t i = 0;
 	size_t neighbour;
 
@@ -85,7 +83,7 @@ size_t get_result(Labyrinth *labyrinth) {
 	//printf("%zu\n\n", labyrinth->walls.size);
 	toggle_bit(&labyrinth->walls, block);
 	//labyrinth->walls.array[block] = true;
-	new_get_new_neighbours(block, labyrinth, active_queue);
+	get_new_neighbours(block, labyrinth, active_queue);
 	while (!(is_empty_queue(&queue_0) && is_empty_queue(&queue_1))) {
 
 		block = dequeue(active_queue, &queue_end);
@@ -103,7 +101,7 @@ size_t get_result(Labyrinth *labyrinth) {
 			break;
 		}
 
-		new_get_new_neighbours(block, labyrinth, non_active_queue);
+		get_new_neighbours(block, labyrinth, non_active_queue);
 	}
 
 	free_queue(&queue_0);

@@ -32,10 +32,6 @@ void init_numbers_array(NumbersArray *num_array, size_t alloc_size);
 
 void push_back_number(NumbersArray *num_array, size_t number);
 
-void init_bool_array(BoolArray *bool_array, size_t size);
-
-void push_back_bool(BoolArray *num_array, size_t value);
-
 void printf_array(NumbersArray *array);
 
 void calculate_partial_products(NumbersArray *array, NumbersArray *result, bool *overflow);
