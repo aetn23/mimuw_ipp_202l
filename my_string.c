@@ -91,6 +91,8 @@ size_t hexal_to_reverse_binary(String *str, NumbersArray *result) {
 				distance_since_last_one = 0;
 			if (number % BASE_TWO == 1)
 				toggle_bit(result, position);
+			else
+				result->size++;
 			number /= BASE_TWO;
 			position++;
 		}
@@ -99,6 +101,7 @@ size_t hexal_to_reverse_binary(String *str, NumbersArray *result) {
 	}
 	//printf("\n");
 	free(character);
+	result->size -= distance_since_last_one;
 	return distance_since_last_one;
 
 }

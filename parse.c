@@ -87,7 +87,6 @@ bool parse_number(NumbersArray *numbers, const Line *line,
 	for (; *i < line->size; (*i)++) {
 		character = line->content[*i];
 
-
 		if (isspace(character)) {
 			insert_str(number_as_string, NULL_CHAR, number_as_string->size);
 
@@ -267,11 +266,14 @@ bool parse_fourth_line(Labyrinth *labyrinth, const Line *line, const size_t line
 		insert_str(&result_hexal_variant, NULL_CHAR, result_hexal_variant.size);
 		// In C strings are counted up to null byte.
 		--result_hexal_variant.size;
+		//1713040
+		//1295996
 
-
-		;
+		//printf("%s\n", result_hexal_variant.content);
 		//printf("%zu\n", labyrinth->walls.size);
-		if (4 * result_hexal_variant.size - hexal_to_reverse_binary(&result_hexal_variant, &labyrinth->walls) > back_num_array(&labyrinth->partial_array)) {
+		hexal_to_reverse_binary(&result_hexal_variant, &labyrinth->walls);
+		//printf("%zu\n", labyrinth->walls.size);
+		if (labyrinth->walls.size  > back_num_array(&labyrinth->partial_array)) {
 			handle_wrong_input(line_number);
 			success = false;
 		}
@@ -300,7 +302,8 @@ bool parse(Labyrinth *labyrinth) {
 
 	while (true) {
 		line = read_line();
-
+		if (lines_count == 5)
+			break;
 
 		if (!line.state && lines_count == MAX_NUM_LINES + 1 && line.size == 0) {
 			break;
