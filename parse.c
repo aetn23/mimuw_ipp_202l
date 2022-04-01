@@ -159,7 +159,11 @@ bool parse_first_3_lines(Labyrinth *labyrinth, const Line *line, const size_t li
 			handle_wrong_input(0);
 
 			success = false;
+		} else if (labyrinth->dimensions.size == 0) {
+			handle_wrong_input(line_number);
+			success = false;
 		}
+
 	} else if (numbers.size != labyrinth->dimensions.size) {
 		handle_wrong_input(line_number);
 		success = false;
@@ -266,8 +270,6 @@ bool parse_fourth_line(Labyrinth *labyrinth, const Line *line, const size_t line
 		insert_str(&result_hexal_variant, NULL_CHAR, result_hexal_variant.size);
 		// In C strings are counted up to null byte.
 		--result_hexal_variant.size;
-		//1713040
-		//1295996
 
 		//printf("%s\n", result_hexal_variant.content);
 		//printf("%zu\n", labyrinth->walls.size);
@@ -302,8 +304,6 @@ bool parse(Labyrinth *labyrinth) {
 
 	while (true) {
 		line = read_line();
-		if (lines_count == 5)
-			break;
 
 		if (!line.state && lines_count == MAX_NUM_LINES + 1 && line.size == 0) {
 			break;
@@ -316,7 +316,7 @@ bool parse(Labyrinth *labyrinth) {
 		//The fourth line may not end with \n, but the parsing of that line
 		//will be shorter and nicer if they could assume that \n always will be 
 		//present. Hence, this insertion.
-		if (lines_count == 4 && !isspace(line.content[line.size - 1])) {
+		if (!isspace(line.content[line.size - 1])) {
 			insert_line(&line, ISSPACE_DUMMY, line.size);
 			insert_line(&line, NULL_CHAR, line.size);
 			line.size--;

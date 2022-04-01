@@ -16,6 +16,8 @@ void *malloc_wrapper(size_t size) {
 
 void *calloc_wraper(size_t num, size_t size) {
 	void *result = calloc(num, size);
+	if (result == NULL)
+		printf("DUPA");
 	check_alloc(result);
 
 	return result;
