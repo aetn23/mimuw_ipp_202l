@@ -26,6 +26,7 @@ void push_back_number(NumbersArray *num_array, const size_t number) {
   num_array->size++;
 }
 
+// First index of result is 1, since empty product is 1.
 void calculate_partial_products(const NumbersArray *array, NumbersArray *result,
                                 bool *overflow) {
   push_back_number(result, 1);
@@ -48,7 +49,7 @@ size_t back_num_array(const NumbersArray *array) {
 }
 
 // Greater in the sense that every element of first array is greater than
-// correspodnig element in second one. This function assumes the arrays are of
+// corresponding element in second one. This function assumes the arrays are of
 // equal length.
 bool is_array_greater(const NumbersArray *array1, const NumbersArray *array2) {
   for (size_t i = 0; i < array1->size; i++) {

@@ -15,8 +15,6 @@ void *malloc_wrapper(const size_t size) {
 
 void *calloc_wraper(const size_t num, const size_t size) {
   void *result = calloc(num, size);
-  if (result == NULL)
-    printf("DUPA");
   check_alloc(result);
 
   return result;
@@ -40,12 +38,9 @@ void free_string(String *str) {
 }
 
 void free_labyrinth(Labyrinth *labyrinth) {
-  if (labyrinth->walls.array != NULL)
-    free_numbers_array(&labyrinth->walls);
-  if (labyrinth->dimensions.array != NULL)
-    free_numbers_array(&labyrinth->dimensions);
-  if (labyrinth->partial_array.array != NULL)
-    free_numbers_array(&labyrinth->partial_array);
+  free_numbers_array(&labyrinth->walls);
+  free_numbers_array(&labyrinth->dimensions);
+  free_numbers_array(&labyrinth->partial_product);
 }
 
 void free_queue(NumFIFO *fifo) { free_numbers_array(&fifo->array); }

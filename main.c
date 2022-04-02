@@ -23,5 +23,5 @@ int main() {
   }
   free_labyrinth(&labyrinth);
 
-  return 0;
+  return (int)!good_input;
 }

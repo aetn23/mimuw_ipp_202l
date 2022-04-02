@@ -10,7 +10,7 @@
 
 typedef struct Labyrinth {
   NumbersArray dimensions;
-  NumbersArray partial_array;
+  NumbersArray partial_product;
   NumbersArray walls;
   size_t start, finish;
 } Labyrinth;

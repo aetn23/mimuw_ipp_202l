@@ -6,7 +6,7 @@
 
 void init_labyrinth(Labyrinth *labyrinth, const size_t alloc_size) {
   init_numbers_array(&labyrinth->dimensions, 0);
-  init_numbers_array(&labyrinth->partial_array, alloc_size);
+  init_numbers_array(&labyrinth->partial_product, alloc_size);
   init_bit_array(&labyrinth->walls, 0);
   labyrinth->start = 0;
   labyrinth->finish = 0;
@@ -18,7 +18,7 @@ size_t array_rep_to_number_rep(const NumbersArray *array,
   size_t result = 0;
 
   for (size_t i = 0; i < array->size; i++)
-    result += (array->array[i] - 1) * labyrinth->partial_array.array[i];
+    result += (array->array[i] - 1) * labyrinth->partial_product.array[i];
 
   return result;
 }
@@ -30,46 +30,51 @@ inline bool is_wall(size_t block, Labyrinth *labyrinth) {
 void get_new_neighbours_helper(const size_t block, Labyrinth *labyrinth,
                                NumFIFO *result, const size_t neighbour,
                                const size_t i) {
-  size_t block_i_dimension = block / labyrinth->partial_array.array[i + 1];
-  size_t neigbour_i_dimension =
-      neighbour / labyrinth->partial_array.array[i + 1];
+  size_t block_i_dimension = block / labyrinth->partial_product.array[i + 1];
+  size_t neighbour_i_dimension =
+      neighbour / labyrinth->partial_product.array[i + 1];
 
   bool is_neighbour_correct =
-      neighbour < back_num_array(&labyrinth->partial_array) &&
+      neighbour < back_num_array(&labyrinth->partial_product) &&
       !is_wall(neighbour, labyrinth) &&
-      block_i_dimension == neigbour_i_dimension;
+      block_i_dimension == neighbour_i_dimension;
   if (is_neighbour_correct) {
     enqueue(result, neighbour);
     toggle_bit(&labyrinth->walls, neighbour);
   }
 }
 
+// New neighbours can be counted directly from block number representation if
+// one notices the relationship expressed in this function and its helper.
 void get_new_neighbours(const size_t block, Labyrinth *labyrinth,
                         NumFIFO *result) {
   size_t i = 0;
   size_t neighbour;
 
-  for (; i < labyrinth->partial_array.size - 1; i++) {
+  for (; i < labyrinth->partial_product.size - 1; i++) {
     bool is_bigger_neighbour_within_bounds =
-        back_num_array(&labyrinth->partial_array) -
-            labyrinth->partial_array.array[i] >=
+        back_num_array(&labyrinth->partial_product) -
+            labyrinth->partial_product.array[i] >=
         block;
     bool is_smaller_neighbour_within_bounds =
-        block >= labyrinth->partial_array.array[i];
+        block >= labyrinth->partial_product.array[i];
 
     if (is_bigger_neighbour_within_bounds) {
-      neighbour = block + labyrinth->partial_array.array[i];
+      neighbour = block + labyrinth->partial_product.array[i];
       get_new_neighbours_helper(block, labyrinth, result, neighbour, i);
     }
 
     if (is_smaller_neighbour_within_bounds) {
-      neighbour = block - labyrinth->partial_array.array[i];
+      neighbour = block - labyrinth->partial_product.array[i];
       get_new_neighbours_helper(block, labyrinth, result, neighbour, i);
     }
   }
 }
 
-// todo describe what is happening
+// In order to find an end of labyrinth a simple bfs is used. Using of two
+// queues allows easily return distance from start to the end, because said
+// distance is equal to an amount of how much queue switches have been made, as
+// in the function.
 size_t get_result(Labyrinth *labyrinth) {
   size_t distance = 1;
   bool found = false;
@@ -90,6 +95,7 @@ size_t get_result(Labyrinth *labyrinth) {
 
   toggle_bit(&labyrinth->walls, block);
   get_new_neighbours(block, labyrinth, active_queue);
+
   while (!(is_empty_queue(&queue_0) && is_empty_queue(&queue_1))) {
 
     block = dequeue(active_queue, &queue_end);

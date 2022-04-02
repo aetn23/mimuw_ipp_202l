@@ -62,6 +62,10 @@ void clear_str(String *str) {
   str->size = 0;
 }
 
+// Getting walls from hexal is essentially reading consecutive bits starting
+// from the end of string. Also leading zeroes have to be taken into account in
+// order to correctly calculate size of walls. This function assumes it receives
+// result array filled with zeroes.
 size_t get_walls_hexal_version(String *str, NumbersArray *result) {
   char *character = malloc(2 * sizeof(char));
   character[1] = NULL_CHAR;

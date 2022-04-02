@@ -62,12 +62,12 @@ void get_walls_r_version(const Labyrinth *labyrinth, const NumbersArray *R_line,
   for (; i < r; i++) {
     s_i = (a * s_i + b) % m;
     push_back_number(&w_numbers,
-                     s_i % back_num_array(&labyrinth->partial_array));
+                     s_i % back_num_array(&labyrinth->partial_product));
   }
 
   // Fill walls array with walls.
   for (i = 0; i < w_numbers.size; i++) {
-    while (w_numbers.array[i] < back_num_array(&labyrinth->partial_array)) {
+    while (w_numbers.array[i] < back_num_array(&labyrinth->partial_product)) {
       toggle_bit(walls, w_numbers.array[i]);
       bool next_addition_overflow =
           w_numbers.array[i] > SIZE_MAX - TWO_TO_THIRTYTWO;
@@ -161,7 +161,7 @@ bool parse_first_3_lines(Labyrinth *labyrinth, const Line *line,
     bool overflow = false;
 
     calculate_partial_products(&labyrinth->dimensions,
-                               &labyrinth->partial_array, &overflow);
+                               &labyrinth->partial_product, &overflow);
 
     if (overflow) {
       handle_wrong_input(0);
@@ -276,7 +276,7 @@ bool parse_fourth_line(Labyrinth *labyrinth, const Line *line,
 
   init_bit_array(
       &labyrinth->walls,
-      (back_num_array(&labyrinth->partial_array) / SIZE_T_SIZE_IN_BITS) + 1);
+      (back_num_array(&labyrinth->partial_product) / SIZE_T_SIZE_IN_BITS) + 1);
 
   if (success && result_hexal_variant.size == 0) {
     get_walls_r_version(labyrinth, &result_R_variant, &labyrinth->walls);
@@ -286,12 +286,12 @@ bool parse_fourth_line(Labyrinth *labyrinth, const Line *line,
     --result_hexal_variant.size;
 
     get_walls_hexal_version(&result_hexal_variant, &labyrinth->walls);
-    if (labyrinth->walls.size > back_num_array(&labyrinth->partial_array)) {
+    if (labyrinth->walls.size > back_num_array(&labyrinth->partial_product)) {
       handle_wrong_input(line_number);
       success = false;
     }
 
-    labyrinth->walls.size = back_num_array(&labyrinth->partial_array);
+    labyrinth->walls.size = back_num_array(&labyrinth->partial_product);
   }
 
   if (success) {

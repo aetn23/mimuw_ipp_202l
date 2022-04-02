@@ -8,7 +8,6 @@ then
   exit
 fi
 
-
 program=`realpath "$1"`
 directory=`realpath "$2"`
 
@@ -22,7 +21,9 @@ do
 
   if [ "$testing_with_valgrind" == 1 ]
   then
-    valgrind --error-exitcode=3180 --log-file=valgrind.log --tool=memcheck --leak-check=full --show-leak-kinds=all --track-origins=yes -s $program < "$test_file" >"$temporary_out" 2>"$temporary_err"
+    valgrind --error-exitcode=3180 --log-file=valgrind.log --tool=memcheck
+     --leak-check=full --show-leak-kinds=all --track-origins=yes -s
+     $program < "$test_file" >"$temporary_out" 2>"$temporary_err"
     exitcode="$?"
   else
   ($program < "$test_file") > "$temporary_out" 2>"$temporary_err"
@@ -53,7 +54,5 @@ do
       echo "No mem errors"
     fi
   fi
-
-
 
 done

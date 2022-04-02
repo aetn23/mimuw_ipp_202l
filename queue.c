@@ -9,7 +9,6 @@ void enqueue(NumFIFO *fifo, const size_t value) {
   push_back_number(&fifo->array, value);
 }
 
-// todo implement shrinking after first_pos > constant
 size_t dequeue(NumFIFO *fifo, bool *end) {
   if (fifo->first_pos >= fifo->array.size) {
     *end = true;
