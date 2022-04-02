@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #include "labyrinth.h"
-#include "memory_managment.h"
+#include "memory_management.h"
 #include "parse.h"
 
 int main() {

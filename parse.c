@@ -11,7 +11,7 @@
 
 #include "arrays.h"
 #include "error_handling.h"
-#include "memory_managment.h"
+#include "memory_management.h"
 #include "my_string.h"
 #include "parse.h"
 

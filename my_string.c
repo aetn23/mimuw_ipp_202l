@@ -1,6 +1,6 @@
 #include <string.h>
 
-#include "memory_managment.h"
+#include "memory_management.h"
 #include "my_string.h"
 
 #define HEXAl_AS_BIN_SIZE 4

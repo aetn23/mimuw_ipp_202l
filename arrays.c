@@ -1,7 +1,7 @@
 #include <stdint.h>
 
 #include "arrays.h"
-#include "memory_managment.h"
+#include "memory_management.h"
 
 void init_numbers_array(NumbersArray *num_array, const size_t alloc_size) {
   if (alloc_size > 0) {

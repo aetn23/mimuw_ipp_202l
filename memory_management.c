@@ -1,4 +1,4 @@
-#include "memory_managment.h"
+#include "memory_management.h"
 #include "error_handling.h"
 
 void check_alloc(void *pointer) {

@@ -1,7 +1,7 @@
 #include <string.h>
 
 #include "labyrinth.h"
-#include "memory_managment.h"
+#include "memory_management.h"
 #include "queue.h"
 
 void init_labyrinth(Labyrinth *labyrinth, const size_t alloc_size) {
