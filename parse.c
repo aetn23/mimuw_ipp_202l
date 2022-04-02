@@ -217,7 +217,7 @@ bool parse_fourth_line_helper(String *result_hexal_variant,
     if (parse_first_3_lines_helper(result_R_variant, line, line_number,
                                    MIN_NUMBER_FOURTH_LINE, UINT32_MAX)) {
       bool are_R_line_condition_satisfied =
-          result_R_variant->array[2] != 0 && result_R_variant->size == 5;
+          result_R_variant->size == 5 && result_R_variant->array[2] != 0;
 
       if (are_R_line_condition_satisfied) {
 
@@ -278,9 +278,9 @@ bool parse_fourth_line(Labyrinth *labyrinth, const Line *line,
       &labyrinth->walls,
       (back_num_array(&labyrinth->partial_array) / SIZE_T_SIZE_IN_BITS) + 1);
 
-  if (result_hexal_variant.size == 0) {
+  if (success && result_hexal_variant.size == 0) {
     get_walls_r_version(labyrinth, &result_R_variant, &labyrinth->walls);
-  } else {
+  } else if (success) {
     insert_str(&result_hexal_variant, NULL_CHAR, result_hexal_variant.size);
     // In C strings are counted up to null byte.
     --result_hexal_variant.size;
