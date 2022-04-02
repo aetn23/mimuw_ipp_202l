@@ -5,4 +5,4 @@
 
 bool parse(Labyrinth *labyrinth);
 
-#endif //PARSE_H
+#endif // PARSE_H

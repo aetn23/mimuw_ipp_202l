@@ -1,14 +1,14 @@
 #ifndef _QUEUE_
 #define _QUEUE_
 
-#include <stddef.h>
 #include <stdbool.h>
+#include <stddef.h>
 
 #include "arrays.h"
 
 typedef struct NumFIFO {
-	NumbersArray array;
-	size_t first_pos;
+  NumbersArray array;
+  size_t first_pos;
 } NumFIFO;
 
 void init_fifo(NumFIFO *fifo, size_t alloc_size);

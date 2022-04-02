@@ -11,5 +11,5 @@ void handle_wrong_input(const size_t line_num) {
 
 void handle_alloc_failure() {
 	fprintf(stderr, "ERROR 0\n");
-	exit(ALLOC_FAILURE_EXIT_CODE);
+  exit(ALLOC_FAILURE_EXIT_CODE);
 }

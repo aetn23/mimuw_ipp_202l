@@ -25,6 +25,4 @@ void free_labyrinth(Labyrinth *labyrinth);
 
 void free_queue(NumFIFO *fifo);
 
-
-
 #endif //_MEMORY_MANAGMENT_
